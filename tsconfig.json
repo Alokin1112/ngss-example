@@ -8,6 +8,7 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
+    "strictNullChecks": false,
     "esModuleInterop": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,

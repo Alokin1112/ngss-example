@@ -51,6 +51,7 @@
             "checksVoidReturn": false
           }
         ],
+        "@typescript-eslint/no-unsafe-assignment": "off",
         "no-console": 2,
         "semi": [
           1,
