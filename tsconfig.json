@@ -47,6 +47,9 @@
       ],
       "@app/*": [
         "./src/app/*"
+      ],
+      "ngss": [
+        "dist/ngss"
       ]
     },
   },
