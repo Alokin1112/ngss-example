@@ -1,4 +1,5 @@
-import { ActionInterface } from "ngss";
+import { ActionInterface } from "projects/ngss/src/lib/actions/actions.interface";
+
 
 export abstract class ActionClass<T> implements ActionInterface<T> {
 
