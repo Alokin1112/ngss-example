@@ -18,3 +18,4 @@ export * from 'projects/ngss/src/lib/reducers/reducers.token';
 //store
 export * from 'projects/ngss/src/lib/store/store.interface';
 export * from 'projects/ngss/src/lib/store/store.class.implementation';
+export * from 'projects/ngss/src/lib/store/store.module';

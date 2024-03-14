@@ -1,8 +1,7 @@
-import { ActionInterface } from "ngss";
-import { ACTION_HANDLER_METADATA_KEY, ActionHandlerTarget } from "projects/ngss/src/lib/decorators/action-handler.decorator";
+import { ActionInterface } from "projects/ngss/src/lib/actions/actions.interface";
+import { ACTION_HANDLER_METADATA_KEY, ActionHandlerContext, ActionHandlerTarget } from "projects/ngss/src/lib/decorators/action-handler.decorator";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
-import { BehaviorSubject, Observable } from "rxjs";
-
+import { BehaviorSubject, Observable, take } from "rxjs";
 
 export abstract class StoreReducer<T> implements ReducerInterface<T> {
   readonly name: string;
@@ -23,11 +22,24 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
   }
 
   handleAction<A>(action: ActionInterface<A>): void {
-    const actionHandler = this.getActionHandlers(this, action?.getType());
-
+    const actionHandlers = this.getActionHandlers(this, action?.getType()) || [];
+    actionHandlers.forEach((actionItem) => {
+      const actionResult = actionItem(this.getActionHandlerContext(), action?.getPayload());
+      if (actionResult) {
+        actionResult.pipe(take(1)).subscribe();
+      }
+    });
   }
 
-  private handleSingleAction
+
+  private getActionHandlerContext(): ActionHandlerContext<T> {
+    return {
+      getState: () => this.state$.getValue(),
+      setState: (state: T) => this.state$.next(state),
+      patchState: (state: Partial<T>) => this.state$.next({ ...this.state$.getValue(), ...state }),
+    };
+  }
+
 
   private getActionHandlers(instance: StoreReducer<T>, type: string): ActionHandlerTarget[] {
     const prototype = Object.getPrototypeOf(instance);
@@ -35,13 +47,13 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
 
     let actionHandlers: ActionHandlerTarget[] = [];
     methods?.forEach((methodName) => {
-      const method = instance[methodName];
+      const method = (instance as unknown as Record<string, unknown>)[methodName];
       const action = Reflect.getMetadata(ACTION_HANDLER_METADATA_KEY, instance, methodName);
 
       if (typeof method === 'function' && action && action == type && method !== instance.constructor) {
-        actionHandlers = [...actionHandlers, method as ActionHandlerTarget]
+        actionHandlers = [...actionHandlers, method as ActionHandlerTarget];
       }
-    })
+    });
     return actionHandlers;
   }
 }

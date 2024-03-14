@@ -1,18 +1,19 @@
 import { Inject, Injectable } from "@angular/core";
-import { ActionInterface } from "ngss";
+import { ActionInterface } from "projects/ngss/src/lib/actions/actions.interface";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
 import { REDUCERS_LIST } from "projects/ngss/src/lib/reducers/reducers.token";
 import { Store } from "projects/ngss/src/lib/store/store.interface";
 import { Observable, combineLatest, map, merge, shareReplay } from "rxjs";
 
 @Injectable()
-export class StoreClass<S> implements Store<S> {
+export class StoreClass<S> extends Store<S> {
 
   private readonly state$: Observable<S>;
 
   constructor(
     @Inject(REDUCERS_LIST) private reducers: ReducerInterface<unknown>[]
   ) {
+    super();
     this.state$ = this.prepareState(reducers);
   }
 
@@ -30,7 +31,7 @@ export class StoreClass<S> implements Store<S> {
   }
 
   selectSnapshot<T>(callback: (state: S) => T): T {
-    return;
+    return null;
   }
 
   private prepareState(reducers: ReducerInterface<unknown>[]): Observable<S> {
