@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AddNumber, RemoveNumber } from '@app/store/testing.store.actions';
-import { ActionClass, NgssComponent, Store } from 'ngss';
+import { AddNumber, IntervalAdding, RemoveNumber } from '@app/store/testing.store.actions';
+import { NgssComponent, Store } from 'ngss';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'ds-root',
@@ -13,11 +14,22 @@ import { ActionClass, NgssComponent, Store } from 'ngss';
 })
 export class AppComponent {
   title = 'angular-template';
+  number$: Observable<number>;
 
   constructor(
     private store: Store
   ) {
-    this.store.select((state) => state?.test.value as number).subscribe(console.log)
+    this.number$ = this.store.select((state) => state?.test.value as number);
+  }
+
+  increment(): void {
+    this.store.dispatch(new AddNumber(1));
+  }
+  decrement(): void {
     this.store.dispatch(new RemoveNumber(1));
+  }
+
+  interval(): void {
+    this.store.dispatch(new IntervalAdding(1));
   }
 }
