@@ -24,6 +24,7 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
 
   handleAction<A>(action: ActionInterface<A>): void {
     const actionHandlers = this.getActionHandlers(this, action?.getType()) || [];
+    console.log(actionHandlers);
     actionHandlers.forEach((actionItem) => {
       const actionResult = actionItem(this.getActionHandlerContext(), action?.getPayload());
       if (actionResult) {

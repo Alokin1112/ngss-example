@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AddNumber, RemoveNumber } from '@app/store/testing.store.actions';
 import { ActionClass, NgssComponent, Store } from 'ngss';
 
 @Component({
@@ -17,5 +18,6 @@ export class AppComponent {
     private store: Store
   ) {
     this.store.select((state) => state?.test.value as number).subscribe(console.log)
+    this.store.dispatch(new RemoveNumber(1));
   }
 }
