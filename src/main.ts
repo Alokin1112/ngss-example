@@ -5,6 +5,8 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import appRouting from '@app/app.routing';
+import { NGSSStoreModule, NgssStoreProviderFn } from 'ngss';
+import { TestReducer } from '@app/store/testing.store.reducer';
 
 
 bootstrapApplication(AppComponent, {
@@ -14,8 +16,10 @@ bootstrapApplication(AppComponent, {
             // Register the ServiceWorker as soon as the application is stable
             // or after 30 seconds (whichever comes first).
             registrationStrategy: 'registerWhenStable:30000'
-        })),
-        provideAnimations()
+        })
+        ),
+        NgssStoreProviderFn([TestReducer]),
+        provideAnimations(),
     ]
 })
     .catch(err => console.error(err));

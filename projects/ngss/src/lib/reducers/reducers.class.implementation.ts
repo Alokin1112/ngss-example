@@ -4,12 +4,13 @@ import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interf
 import { BehaviorSubject, Observable, take } from "rxjs";
 
 export abstract class StoreReducer<T> implements ReducerInterface<T> {
-  readonly name: string;
-  readonly initialValue: T;
+  abstract readonly name: string;
+  readonly initialValue: T = null;
 
   private state$: BehaviorSubject<T>;
 
-  constructor() {
+  constructor(initialValue: T) {
+    this.initialValue = initialValue;
     this.state$ = new BehaviorSubject<T>(this.initialValue);
   }
 

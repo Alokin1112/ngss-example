@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ActionClass, NgssComponent } from 'ngss';
+import { ActionClass, NgssComponent, Store } from 'ngss';
 
 @Component({
   selector: 'ds-root',
@@ -13,13 +13,9 @@ import { ActionClass, NgssComponent } from 'ngss';
 export class AppComponent {
   title = 'angular-template';
 
-  constructor() {
-    const x = new Test({ name: 'dupa', age: 12 });
-
+  constructor(
+    private store: Store
+  ) {
+    this.store.select((state) => state?.test.value as number).subscribe(console.log)
   }
-}
-
-
-class Test extends ActionClass<{ name: string, age: number }> {
-  override type = 'test';
 }

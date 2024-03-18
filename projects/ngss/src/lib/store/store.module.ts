@@ -1,8 +1,8 @@
-import { Store } from 'projects/ngss/src/lib/store/store.interface';
-import { ModuleWithProviders, NgModule, Optional, SkipSelf } from "@angular/core";
+import { ModuleWithProviders, NgModule, Optional, Provider, ProviderToken, SkipSelf, inject } from "@angular/core";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
 import { REDUCERS_LIST } from "projects/ngss/src/lib/reducers/reducers.token";
 import { StoreClass } from "projects/ngss/src/lib/store/store.class.implementation";
+import { Store } from 'projects/ngss/src/lib/store/store.interface';
 
 @NgModule({
 
@@ -17,21 +17,21 @@ export class NGSSStoreModule {
     }
   }
 
-  static forRoot(reducers: ReducerInterface<any>[]): ModuleWithProviders<NGSSStoreModule> {
+  static forRoot(reducers: ProviderToken<ReducerInterface<unknown>>[]): ModuleWithProviders<NGSSStoreModule> {
     return {
       ngModule: NGSSStoreModule,
       providers: [
-        {
-          provide: Store,
-          useClass: StoreClass,
-          deps: [
-            {
-              provide: REDUCERS_LIST,
-              useValue: reducers,
-            }
-          ]
-        },
+        NgssStoreProviderFn(reducers),
       ]
     };
   }
 }
+
+export const NgssStoreProviderFn = (reducers: ProviderToken<ReducerInterface<unknown>>[]): Provider => ({
+  provide: Store,
+  useFactory: StoreFactory(reducers),
+});
+
+export const StoreFactory = (reducers: ProviderToken<ReducerInterface<unknown>>[]) => () => {
+  return new StoreClass(reducers.map((reducer) => inject(reducer)));
+}; 
