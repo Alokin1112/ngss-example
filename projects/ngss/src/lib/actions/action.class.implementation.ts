@@ -1,17 +1,17 @@
 import { ActionInterface } from "projects/ngss/src/lib/actions/actions.interface";
 
 
-export abstract class ActionClass<T> implements ActionInterface<T> {
+export class ActionClass<T> implements ActionInterface<T> {
 
-  protected abstract readonly type: string;
+  readonly type: string;
 
   constructor(public payload?: T) { }
 
   getType(): string {
-    return this.type;
+    return this.type || this.constructor.name;
   }
 
-  getPayload(): T {
+  getPayload(): T | undefined {
     return this?.payload;
   }
 }

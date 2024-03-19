@@ -20,6 +20,9 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
   }
 
   reset(): void {
+    Object.keys(this.subscriptions).forEach((key) => {
+      this.completeSubscriptions(key);
+    });
     this.state$.next(this.initialValue);
   }
 
@@ -28,10 +31,8 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
     const actionHandlersWithOptions = this.getActionHandlers(this, type) || [];
     actionHandlersWithOptions.forEach(({ actionHandler, options }) => {
       this.subscriptions[type] = this.subscriptions[action?.getType()] || [];
-      if (options?.completePreviousObservables) {
-        this.subscriptions[type].forEach((subscription) => !subscription.closed && subscription.unsubscribe());
-        this.subscriptions[type] = [];
-      }
+      options?.completePreviousObservables && this.completeSubscriptions(type);
+
       const actionResult = actionHandler(this.getActionHandlerContext(), action?.getPayload());
       if (actionResult) {
         const subscription = actionResult.subscribe();
@@ -49,6 +50,10 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
     };
   }
 
+  private completeSubscriptions(type: string): void {
+    this.subscriptions[type]?.forEach((subscription) => !subscription.closed && subscription.unsubscribe());
+    this.subscriptions[type] = [];
+  }
 
   private getActionHandlers(instance: StoreReducer<T>, type: string): ActionHandlerWithOptions[] {
     const prototype = Object.getPrototypeOf(instance);

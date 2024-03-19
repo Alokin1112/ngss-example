@@ -1,4 +1,4 @@
-import { ActionHandlerAction } from 'projects/ngss/src/lib/actions/actions.interface';
+import { ActionHandlerAction, ActionInterface } from 'projects/ngss/src/lib/actions/actions.interface';
 import { ReducerInterface } from 'projects/ngss/src/lib/reducers/reducers.interface';
 import 'reflect-metadata';
 import { Observable } from 'rxjs';
@@ -30,7 +30,8 @@ export const ActionHandler = <T>(
   }
 ) => {
   return function (target: ReducerInterface<any>, propertyKey: string, descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata(ACTION_HANDLER_METADATA_KEY, action?.getType(), target, propertyKey);
+    const instance = new action() as ActionInterface<T>
+    Reflect.defineMetadata(ACTION_HANDLER_METADATA_KEY, instance?.getType(), target, propertyKey);
     Reflect.defineMetadata(ACTION_HANDLER_OPTIONS_KEY, options, target, propertyKey);
   };
 };

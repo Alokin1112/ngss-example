@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AddNumber, IntervalAdding, RemoveNumber } from '@app/store/testing.store.actions';
+import { AddNumber, ClearNumber, IntervalAdding, RemoveNumber } from '@app/store/testing.store.actions';
 import { NgssComponent, Store } from 'ngss';
 import { Observable } from 'rxjs';
 
@@ -20,6 +20,7 @@ export class AppComponent {
     private store: Store
   ) {
     this.number$ = this.store.select((state) => state?.test.value as number);
+    console.log((new ClearNumber()).getType())
   }
 
   increment(): void {
@@ -31,5 +32,9 @@ export class AppComponent {
 
   interval(): void {
     this.store.dispatch(new IntervalAdding(1));
+  }
+
+  reset(): void {
+    this.store.reset();
   }
 }

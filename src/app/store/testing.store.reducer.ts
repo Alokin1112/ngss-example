@@ -18,14 +18,14 @@ export class TestReducer extends StoreReducer<TestState> {
     super(initialState);
   }
 
-  @ActionHandler(new AddNumber(5))
+  @ActionHandler(AddNumber)
   addNumber(context: ActionHandlerContext<TestState>, payload: number): void {
     context.patchState({
       value: context.getState().value + payload
     });
   }
 
-  @ActionHandler(new RemoveNumber(5))
+  @ActionHandler(RemoveNumber)
   removeNumber(context: ActionHandlerContext<TestState>, payload: number): Observable<unknown> {
     return of(payload).pipe(
       map((value) => {
@@ -35,7 +35,7 @@ export class TestReducer extends StoreReducer<TestState> {
       }));
   }
 
-  @ActionHandler(new IntervalAdding(4))
+  @ActionHandler(IntervalAdding)
   intervalAdding(context: ActionHandlerContext<TestState>, payload: number): Observable<unknown> {
     return interval(1000).pipe(
       map((value) => {

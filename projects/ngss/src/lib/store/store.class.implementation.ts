@@ -1,7 +1,7 @@
 import { ActionInterface } from "projects/ngss/src/lib/actions/actions.interface";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
 import { Store } from "projects/ngss/src/lib/store/store.interface";
-import { Observable, combineLatest, map, shareReplay } from "rxjs";
+import { Observable, combineLatest, map, shareReplay, take } from "rxjs";
 
 export class StoreClass<S> extends Store {
 
@@ -23,12 +23,26 @@ export class StoreClass<S> extends Store {
   select<T>(callback: (state: S) => T): Observable<T> {
     return this.state$.pipe(
       map(callback),
-      // shareReplay(1), Not sure if this is needed
     );
   }
 
-  selectSnapshot<T>(callback: (state: S) => T): T {
-    return null;
+  selectOnce<T>(callback: (state: S) => T): Observable<T> {
+    return this.select(callback).pipe(take(1));
+  }
+
+  reset(storeName: string | string[] = null): void {
+    if (!storeName) {
+      this.reducers.forEach(reducer => {
+        reducer?.reset();
+      });
+    }
+    if (!Array.isArray(storeName))
+      storeName = [storeName];
+
+    this.reducers.forEach(reducer => {
+      if (storeName.includes(reducer?.name))
+        reducer?.reset();
+    });
   }
 
   private prepareState(reducers: ReducerInterface<unknown>[]): Observable<S> {
