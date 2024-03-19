@@ -11,6 +11,7 @@ export * from 'projects/ngss/src/lib/actions/actions.interface';
 export * from 'projects/ngss/src/lib/actions/action.class.implementation';
 //decorators
 export * from 'projects/ngss/src/lib/decorators/action-handler.decorator';
+export * from 'projects/ngss/src/lib/decorators/selector.decorator';
 //reducers
 export * from 'projects/ngss/src/lib/reducers/reducers.interface';
 export * from 'projects/ngss/src/lib/reducers/reducers.class.implementation';
@@ -19,3 +20,6 @@ export * from 'projects/ngss/src/lib/reducers/reducers.token';
 export * from 'projects/ngss/src/lib/store/store.interface';
 export * from 'projects/ngss/src/lib/store/store.class.implementation';
 export * from 'projects/ngss/src/lib/store/store.module';
+
+//services 
+export * from 'projects/ngss/src/lib/decorators/decorator.service';

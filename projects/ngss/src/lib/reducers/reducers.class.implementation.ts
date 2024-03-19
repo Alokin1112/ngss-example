@@ -41,7 +41,6 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
     });
   }
 
-
   private getActionHandlerContext(): ActionHandlerContext<T> {
     return {
       getState: () => this.state$.getValue(),

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AddNumber, ClearNumber, IntervalAdding, RemoveNumber } from '@app/store/testing.store.actions';
-import { NgssComponent, Store } from 'ngss';
+import { AddNumber, IntervalAdding, RemoveNumber } from '@app/store/testing.store.actions';
+import { DecoratorService, NgssComponent, Selector, Store } from 'ngss';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -13,14 +13,16 @@ import { Observable } from 'rxjs';
   imports: [CommonModule, RouterOutlet, NgssComponent]
 })
 export class AppComponent {
+  @Selector()
   title = 'angular-template';
+
   number$: Observable<number>;
 
   constructor(
-    private store: Store
+    private store: Store,
   ) {
+    console.log(DecoratorService.getInjector())
     this.number$ = this.store.select((state) => state?.test.value as number);
-    console.log((new ClearNumber()).getType())
   }
 
   increment(): void {
