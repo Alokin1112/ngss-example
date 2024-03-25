@@ -1,21 +1,24 @@
-import { inject } from "@angular/core";
-import { DecoratorService } from "projects/ngss/src/lib/decorators/decorator.service";
 import { Store } from "projects/ngss/src/lib/store/store.interface";
+import { NGSSStoreModule } from "projects/ngss/src/lib/store/store.module";
+import { Observable } from "rxjs";
 
-export const Selector = () => {
+export const Selector = <T, S>(callback: (state: S) => T) => {
   return (target: unknown, key: string): void => {
 
-    let value: any;
+    let value: Observable<T>;
 
-    // console.log(DecoratorService.getInjector())
+    setTimeout(() => {
+      const store = NGSSStoreModule.injector.get(Store);
+      value = store.select(callback);
+    }, 0);
 
     const getter = () => {
-      return (value as string) + " (modified)";
+      return value;
     };
 
     const setter = (newVal: unknown) => {
       // Modify the value before assigning it
-      value = newVal;
+      throw new Error('[NGSS] Cannot set a selector value');
     };
 
     Object.defineProperty(target, key, {

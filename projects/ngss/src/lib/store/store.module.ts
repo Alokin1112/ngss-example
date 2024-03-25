@@ -1,7 +1,6 @@
-import { ModuleWithProviders, NgModule, Optional, Provider, ProviderToken, SkipSelf, inject } from "@angular/core";
+import { Injector, ModuleWithProviders, NgModule, Optional, Provider, ProviderToken, SkipSelf, inject } from "@angular/core";
 import { DecoratorService } from "projects/ngss/src/lib/decorators/decorator.service";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
-import { REDUCERS_LIST } from "projects/ngss/src/lib/reducers/reducers.token";
 import { StoreClass } from "projects/ngss/src/lib/store/store.class.implementation";
 import { Store } from 'projects/ngss/src/lib/store/store.interface';
 
@@ -10,12 +9,15 @@ import { Store } from 'projects/ngss/src/lib/store/store.interface';
 })
 export class NGSSStoreModule {
 
-  constructor(@Optional() @SkipSelf() parentModule: NGSSStoreModule) {
+  static injector: Injector;
+
+  constructor(@Optional() @SkipSelf() parentModule: NGSSStoreModule, private injector: Injector) {
     if (parentModule) {
       throw new Error(
-        'NGSSStore is already loaded. Import it in the AppModule only'
+        '[NGSS] NGSSStore is already loaded. Import it in the AppModule only'
       );
     }
+    NGSSStoreModule.injector = this.injector;
   }
 
   static forRoot(reducers: ProviderToken<ReducerInterface<unknown>>[]): ModuleWithProviders<NGSSStoreModule> {
@@ -29,11 +31,11 @@ export class NGSSStoreModule {
   }
 }
 
-export const NgssStoreProviderFn = (reducers: ProviderToken<ReducerInterface<unknown>>[]): Provider => ({
+const NgssStoreProviderFn = (reducers: ProviderToken<ReducerInterface<unknown>>[]): Provider => ({
   provide: Store,
   useFactory: StoreFactory(reducers),
 });
 
-export const StoreFactory = (reducers: ProviderToken<ReducerInterface<unknown>>[]) => () => {
+const StoreFactory = (reducers: ProviderToken<ReducerInterface<unknown>>[]) => () => {
   return new StoreClass(reducers.map((reducer) => inject(reducer)));
 }; 
