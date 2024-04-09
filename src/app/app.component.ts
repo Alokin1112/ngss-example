@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AddNumber, IntervalAdding, RemoveNumber } from '@app/store/testing.store.actions';
 import { NgssComponent, Selector, Store } from 'ngss';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'ds-root',

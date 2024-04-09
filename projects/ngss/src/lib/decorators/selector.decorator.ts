@@ -1,23 +1,27 @@
+import { effect } from "@angular/core";
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from "projects/ngss/src/lib/store/store.interface";
 import { NGSSStoreModule } from "projects/ngss/src/lib/store/store.module";
-import { Observable } from "rxjs";
+import { ReplaySubject } from "rxjs";
 
 export const Selector = <T, S>(callback: (state: S) => T) => {
   return (target: unknown, key: string): void => {
 
-    let value: Observable<T>;
+    const value = new ReplaySubject<T>(1);
 
     setTimeout(() => {
       const store = NGSSStoreModule.injector.get(Store);
-      value = store.select(callback);
+      const signal = toSignal(store.select(callback), { injector: NGSSStoreModule.injector });
+      effect(() => {
+        value.next(signal());
+      }, { injector: NGSSStoreModule.injector });
     }, 0);
 
     const getter = () => {
-      return value;
+      return value.asObservable();
     };
 
     const setter = (newVal: unknown) => {
-      // Modify the value before assigning it
       throw new Error('[NGSS] Cannot set a selector value');
     };
 
