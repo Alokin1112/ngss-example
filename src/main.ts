@@ -7,6 +7,7 @@ import appRouting from '@app/app.routing';
 import { TestReducer } from '@app/store/testing.store.reducer';
 import { DecoratorService, NGSSStoreModule } from 'ngss';
 import { AppComponent } from './app/app.component';
+import { Mid0, Mid1, Mid2 } from '@app/store/testing.middleware';
 
 
 bootstrapApplication(AppComponent, {
@@ -17,7 +18,13 @@ bootstrapApplication(AppComponent, {
             // or after 30 seconds (whichever comes first).
             registrationStrategy: 'registerWhenStable:30000'
         }),
-            NGSSStoreModule.forRoot([TestReducer]),
+            NGSSStoreModule.forRoot([TestReducer], {
+                middlewares: [
+                    Mid0,
+                    Mid1,
+                    Mid2,
+                ]
+            }),
         ),
         DecoratorService,
         provideAnimations(),

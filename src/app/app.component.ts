@@ -27,6 +27,11 @@ export class AppComponent {
   increment(): void {
     this.store.dispatch(new AddNumber(1));
   }
+
+  incrementWithMiddleWare(): void {
+    this.store.dispatch(new AddNumber(2));
+  }
+
   decrement(): void {
     this.store.dispatch(new RemoveNumber(1));
   }

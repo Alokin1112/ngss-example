@@ -5,6 +5,7 @@ export interface ReducerInterface<T> {
   readonly name: string,
   readonly initialValue: T;
   getState: () => Observable<T>;
+  getSnapshot: () => T;
   handleAction: <A>(action: ActionInterface<A>) => void;
   reset: () => void;
 }

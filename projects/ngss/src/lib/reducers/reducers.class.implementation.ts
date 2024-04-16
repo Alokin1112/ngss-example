@@ -19,6 +19,10 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
     return this.state$.asObservable();
   }
 
+  getSnapshot(): T {
+    return this.state$.getValue();
+  }
+
   reset(): void {
     Object.keys(this.subscriptions).forEach((key) => {
       this.completeSubscriptions(key);

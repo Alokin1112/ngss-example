@@ -1,6 +1,7 @@
 import { Injector, ModuleWithProviders, NgModule, Optional, Provider, ProviderToken, SkipSelf, inject } from "@angular/core";
 import { DecoratorService } from "projects/ngss/src/lib/decorators/decorator.service";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
+import { StoreAdditionalConfig } from "projects/ngss/src/lib/store/store-additional-config.interface";
 import { StoreClass } from "projects/ngss/src/lib/store/store.class.implementation";
 import { Store } from 'projects/ngss/src/lib/store/store.interface';
 
@@ -20,22 +21,22 @@ export class NGSSStoreModule {
     NGSSStoreModule.injector = this.injector;
   }
 
-  static forRoot(reducers: ProviderToken<ReducerInterface<unknown>>[]): ModuleWithProviders<NGSSStoreModule> {
+  static forRoot(reducers: ProviderToken<ReducerInterface<unknown>>[], config: StoreAdditionalConfig = null): ModuleWithProviders<NGSSStoreModule> {
     return {
       ngModule: NGSSStoreModule,
       providers: [
-        NgssStoreProviderFn(reducers),
+        NgssStoreProviderFn(reducers, config),
         DecoratorService
       ]
     };
   }
 }
 
-const NgssStoreProviderFn = (reducers: ProviderToken<ReducerInterface<unknown>>[]): Provider => ({
+const NgssStoreProviderFn = (reducers: ProviderToken<ReducerInterface<unknown>>[], config: StoreAdditionalConfig): Provider => ({
   provide: Store,
-  useFactory: StoreFactory(reducers),
+  useFactory: StoreFactory(reducers, config),
 });
 
-const StoreFactory = (reducers: ProviderToken<ReducerInterface<unknown>>[]) => () => {
-  return new StoreClass(reducers.map((reducer) => inject(reducer)));
+const StoreFactory = (reducers: ProviderToken<ReducerInterface<unknown>>[], config: StoreAdditionalConfig) => () => {
+  return new StoreClass(reducers.map((reducer) => inject(reducer)), config);
 }; 

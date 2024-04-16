@@ -23,3 +23,6 @@ export * from 'projects/ngss/src/lib/store/store.module';
 
 //services 
 export * from 'projects/ngss/src/lib/decorators/decorator.service';
+
+//middleware
+export * from 'projects/ngss/src/lib/middleware/middleware.interface';
