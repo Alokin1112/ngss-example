@@ -23,7 +23,8 @@ bootstrapApplication(AppComponent, {
                     Mid0,
                     Mid1,
                     Mid2,
-                ]
+                ],
+                useSignalStore: true,
             }),
         ),
         DecoratorService,

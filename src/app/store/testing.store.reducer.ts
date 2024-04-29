@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { AddNumber, IntervalAdding, RemoveNumber } from "@app/store/testing.store.actions";
-import { ActionHandler, ActionHandlerContext, StoreReducer } from "ngss";
+import { ActionHandler, ActionHandlerContext, StoreSignalReducer } from "ngss";
 import { Observable, interval, map, of } from "rxjs";
 
 export interface TestState {
@@ -9,10 +9,10 @@ export interface TestState {
 
 const initialState: TestState = {
   value: 0,
-}
+};
 
 @Injectable({ providedIn: 'root' })
-export class TestReducer extends StoreReducer<TestState> {
+export class TestReducer extends StoreSignalReducer<TestState> {
   readonly name = "test";
   constructor() {
     super(initialState);
@@ -44,5 +44,4 @@ export class TestReducer extends StoreReducer<TestState> {
         });
       }));
   }
-
 }

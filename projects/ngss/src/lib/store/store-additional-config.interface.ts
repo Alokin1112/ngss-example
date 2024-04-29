@@ -2,4 +2,5 @@ import { Middleware } from "projects/ngss/src/lib/middleware/middleware.interfac
 
 export interface StoreAdditionalConfig {
   middlewares?: Middleware<unknown>[];
+  useSignalStore?: boolean;
 }

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AddNumber, IntervalAdding, RemoveNumber } from '@app/store/testing.store.actions';
-import { NgssComponent, Selector, Store } from 'ngss';
+import { NgssComponent, Selector, Store, SignalSelector } from 'ngss';
 import { Observable, tap } from 'rxjs';
 
 @Component({
@@ -14,14 +14,19 @@ import { Observable, tap } from 'rxjs';
 })
 export class AppComponent {
   @Selector((state: { test: { value: number } }) => state?.test.value)
-  title$: Observable<number>;
+  numberSelector$: Observable<number>;
 
+  @SignalSelector((state: { test: { value: number } }) => state?.test.value)
+  numberSignalSelector$: Signal<number>;
+
+  numberSignal$: Signal<number>;
   number$: Observable<number>;
 
   constructor(
     private store: Store,
   ) {
     this.number$ = this.store.select((state) => state?.test.value as number);
+    this.numberSignal$ = this.store.selectSignal((state) => state?.test.value as number);
   }
 
   increment(): void {

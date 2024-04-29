@@ -4,6 +4,7 @@ import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interf
 import { StoreAdditionalConfig } from "projects/ngss/src/lib/store/store-additional-config.interface";
 import { StoreClass } from "projects/ngss/src/lib/store/store.class.implementation";
 import { Store } from 'projects/ngss/src/lib/store/store.interface';
+import { StoreSignal } from "projects/ngss/src/public-api";
 
 @NgModule({
 
@@ -38,5 +39,6 @@ const NgssStoreProviderFn = (reducers: ProviderToken<ReducerInterface<unknown>>[
 });
 
 const StoreFactory = (reducers: ProviderToken<ReducerInterface<unknown>>[], config: StoreAdditionalConfig) => () => {
-  return new StoreClass(reducers.map((reducer) => inject(reducer)), config);
+  const injectedReducers = reducers.map((reducer) => inject(reducer));
+  return config?.useSignalStore ? new StoreSignal(injectedReducers, config) : new StoreClass(injectedReducers, config);
 }; 

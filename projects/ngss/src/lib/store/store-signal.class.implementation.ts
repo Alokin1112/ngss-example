@@ -1,15 +1,15 @@
-import { inject, Injector, Signal } from "@angular/core";
-import { toSignal } from "@angular/core/rxjs-interop";
+import { computed, inject, Injector, signal, Signal } from "@angular/core";
+import { toObservable } from "@angular/core/rxjs-interop";
 import { ActionInterface } from "projects/ngss/src/lib/actions/actions.interface";
 import { Middleware, MiddlewareContext } from "projects/ngss/src/lib/middleware/middleware.interface";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
 import { StoreAdditionalConfig } from "projects/ngss/src/lib/store/store-additional-config.interface";
 import { Store } from "projects/ngss/src/lib/store/store.interface";
-import { Observable, combineLatest, map, shareReplay } from "rxjs";
+import { map, Observable } from "rxjs";
 
-export class StoreClass<S> extends Store {
+export class StoreSignal<S> extends Store {
 
-  private readonly state$: Observable<S>;
+  private readonly state$: Signal<S>;
   private readonly middlewares: Middleware<unknown>[];
   private readonly injector = inject(Injector);
 
@@ -29,13 +29,13 @@ export class StoreClass<S> extends Store {
   }
 
   select<T>(callback: (state: S) => T): Observable<T> {
-    return this.state$.pipe(
+    return toObservable(this.state$, { injector: this.injector }).pipe(
       map(callback),
     );
   }
 
   selectSignal<T>(callback: (state: any) => T): Signal<T> {
-    return toSignal(this.select(callback), { injector: this.injector });
+    return computed(() => callback(this.state$()));
   }
 
   selectSnapshot<T>(callback: (state: S) => T): T {
@@ -81,20 +81,12 @@ export class StoreClass<S> extends Store {
     });
   };
 
-  private prepareState(reducers: ReducerInterface<unknown>[]): Observable<S> {
-    return combineLatest(reducers.map(reducer => reducer?.getState())).pipe(
-      map((states: unknown[]) => {
-        let state: S = {} as S;
-        reducers.forEach((reducer, index) => {
-          state = {
-            ...state,
-            [reducer?.name]: states[index]
-          };
-        });
-        return state;
-      }),
-      shareReplay(1),
-    );
+  private prepareState(reducers: ReducerInterface<unknown>[]): Signal<S> {
+    const state: { name: string, val: Signal<unknown> }[] = reducers.map((reducer) => ({
+      name: reducer?.name,
+      val: reducer.getStateSignal(),
+    }));
+    const stateSignal = signal(state)
+    return computed(() => stateSignal().reduce((acc, curr) => ({ ...acc, [curr.name]: curr.val() }), {} as S));
   }
-
 }
