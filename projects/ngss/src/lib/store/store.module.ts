@@ -1,5 +1,6 @@
 import { Injector, ModuleWithProviders, NgModule, Optional, Provider, ProviderToken, SkipSelf, inject } from "@angular/core";
 import { DecoratorService } from "projects/ngss/src/lib/decorators/decorator.service";
+import { ReducersSubscriptionHandlerService } from "projects/ngss/src/lib/reducers/reducers-subscription-handler.service";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
 import { StoreAdditionalConfig } from "projects/ngss/src/lib/store/store-additional-config.interface";
 import { StoreClass } from "projects/ngss/src/lib/store/store.class.implementation";
@@ -27,7 +28,8 @@ export class NGSSStoreModule {
       ngModule: NGSSStoreModule,
       providers: [
         NgssStoreProviderFn(reducers, config),
-        DecoratorService
+        DecoratorService,
+        ReducersSubscriptionHandlerService,
       ]
     };
   }
