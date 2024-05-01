@@ -1,0 +1,43 @@
+:host {
+  display: block;
+}
+
+.actions {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  &__button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+  }
+}
+
+.wrapper {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.results {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  &__card {
+    min-width: 300px;
+
+    &__value {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      padding:16px ;
+    }
+  }
+}

@@ -1,14 +1,23 @@
 import { Routes } from "@angular/router";
 import { AppComponent } from "@app/app.component";
+import { ROUTES_PATH } from "@core/constants/routes-path.const";
+import { HomeComponent } from "@pages/home/home.component";
+import { TestComponentComponent } from "@pages/test-component/test-component.component";
 
 export default [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: ROUTES_PATH.TEST,
     pathMatch: 'full'
   },
   {
-    path: 'home',
-    component: AppComponent,
+    path: '',
+    component: HomeComponent,
+    children: [
+      {
+        path: ROUTES_PATH.TEST,
+        component: TestComponentComponent,
+      }
+    ]
   }
 ] as Routes;

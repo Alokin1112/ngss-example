@@ -5,7 +5,7 @@ import { ActionHandlerContext } from "projects/ngss/src/lib/decorators/action-ha
 import { getReducerActionHandlers } from "projects/ngss/src/lib/reducers/reducers-action-handlers-getter.const";
 import { ReducersSubscriptionHandlerService } from "projects/ngss/src/lib/reducers/reducers-subscription-handler.service";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
-import { BehaviorSubject, Observable, Subscription } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 
 export abstract class StoreReducer<T> implements ReducerInterface<T> {
   abstract readonly name: string;

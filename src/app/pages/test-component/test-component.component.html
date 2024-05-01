@@ -1,0 +1,102 @@
+<div class="actions">
+  <button
+    mat-stroked-button
+    (click)="increment()"
+    class="actions__button"
+    id="increment-button"
+  >
+    <mat-icon>add</mat-icon>
+    Increment
+  </button>
+  <button
+    mat-stroked-button
+    (click)="incrementWithMiddleWare()"
+    class="actions__button"
+    id="increment-with-middleware-button"
+  >
+    <mat-icon>add_circle_outline</mat-icon>
+    Increment with middleware
+  </button>
+  <button
+    mat-stroked-button
+    (click)="decrement()"
+    class="actions__button"
+    id="decrement-button"
+  >
+    <mat-icon>remove</mat-icon>
+    Decrement
+  </button>
+  <button
+    mat-stroked-button
+    (click)="interval()"
+    class="actions__button"
+    id="interval-button"
+  >
+    <mat-icon>timer</mat-icon>
+    Interval
+  </button>
+
+  <button
+    mat-stroked-button
+    (click)="reset()"
+    class="actions__button"
+    id="reset-button"
+  >
+    <mat-icon>restart_alt</mat-icon>
+    Reset
+  </button>
+</div>
+
+<div class="wrapper">
+  <div class="results">
+
+    <mat-card class="results__card">
+      <mat-card-header>
+        <mat-card-title>Select:</mat-card-title>
+      </mat-card-header>
+      <span
+        class="results__card__value"
+        id="select-result"
+      >
+        {{number$ | async}}
+      </span>
+    </mat-card>
+
+    <mat-card class="results__card">
+      <mat-card-header>
+        <mat-card-title>Selector:</mat-card-title>
+      </mat-card-header>
+      <span
+        class="results__card__value"
+        id="selector-result"
+      >
+        {{numberSelector$ | async}}
+      </span>
+    </mat-card>
+
+    <mat-card class="results__card">
+      <mat-card-header>
+        <mat-card-title>Signal select:</mat-card-title>
+      </mat-card-header>
+      <span
+        class="results__card__value"
+        id="select-result"
+      >
+        {{numberSignal$()}}
+      </span>
+    </mat-card>
+
+    <mat-card class="results__card">
+      <mat-card-header>
+        <mat-card-title>Signal selector:</mat-card-title>
+      </mat-card-header>
+      <span
+        class="results__card__value"
+        id="select-result"
+      >
+        {{numberSignalSelector$()}}
+      </span>
+    </mat-card>
+
+  </div>
+</div>

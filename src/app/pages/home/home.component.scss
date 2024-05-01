@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.header__title{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.body__wrapper{
+  padding: 10px;
+}
