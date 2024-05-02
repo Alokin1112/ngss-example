@@ -48,8 +48,9 @@ export class ShopReducer extends StoreSignalReducer<ShopState> {
     const cart = context.getState().cart;
     const firstFoundIndex = cart.findIndex((item) => item.id === id)
     if (firstFoundIndex !== -1) {
+      cart.splice(firstFoundIndex, 1);
       context.patchState({
-        cart: cart.splice(firstFoundIndex, 1)
+        cart,
       });
     }
   }

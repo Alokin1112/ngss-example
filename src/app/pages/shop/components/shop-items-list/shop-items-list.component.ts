@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { ROUTES_PATH } from '@core/constants/routes-path.const';
 import { ShopItem } from '@pages/shop/interfaces/shop-item.interface';
 import { AddToCart } from '@pages/shop/store/shop.store.actions';
 import { Store } from 'ngss';
@@ -19,6 +20,7 @@ import { Store } from 'ngss';
 })
 export class ShopItemsListComponent {
   @Input() items: ShopItem[];
+
 
   constructor(
     private store: Store,

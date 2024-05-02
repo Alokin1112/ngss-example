@@ -1,0 +1,53 @@
+<div class="header">
+  <a
+    [routerLink]="link"
+    mat-icon-button
+  >
+    <mat-icon>
+      arrow_back
+    </mat-icon>
+  </a>
+
+  <button
+    mat-stroked-button
+    class="aligned__button"
+    (click)="clearCart()"
+  >
+    <mat-icon>
+      restart_alt
+    </mat-icon>
+    Wyczyść koszyk
+  </button>
+</div>
+
+<div class="content__wrapper">
+  <div class="content">
+    @for(item of cartItems$(); track $index){
+      <mat-card>
+        <div class="card__content">
+          <div class="card__content__description">
+            <img
+              class="card__content__image"
+              [src]="item?.image"
+            />
+            <div class="card__content__description__header">
+              {{ item?.name }}
+            </div>
+          </div>
+
+          <button
+            mat-stroked-button
+            class="aligned__button"
+            (click)="deleteItemFromCart(item?.id)"
+          >
+            <mat-icon>
+              delete
+            </mat-icon>
+            Usuń z koszyka
+          </button>
+
+        </div>
+      </mat-card>
+    }
+  </div>
+</div>

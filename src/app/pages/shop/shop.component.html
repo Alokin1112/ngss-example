@@ -1,13 +1,14 @@
 <div class="header">
-  <button
+  <a
     mat-stroked-button
     class="aligned__button"
+    [routerLink]="link"
   >
     <mat-icon>
       shopping_cart
     </mat-icon>
     Koszyk ({{cartLength$()}})
-  </button>
+  </a>
 </div>
 
 <ds-shop-items-list [items]="itemsList$()" />
