@@ -15,7 +15,7 @@ export function getReducerActionHandlers<S, T extends ReducerInterface<S>>(insta
       actionHandlers = [
         ...actionHandlers,
         {
-          actionHandler: actionHandler as ActionHandlerTarget,
+          actionHandler: methodName,
           options,
         }
       ];

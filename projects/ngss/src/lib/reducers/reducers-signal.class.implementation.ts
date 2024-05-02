@@ -1,7 +1,7 @@
 import { inject, Injector, signal, Signal, WritableSignal } from "@angular/core";
 import { toObservable } from '@angular/core/rxjs-interop';
 import { ActionInterface } from "projects/ngss/src/lib/actions/actions.interface";
-import { ActionHandlerContext } from "projects/ngss/src/lib/decorators/action-handler.decorator";
+import { ActionHandlerContext, ActionHandlerTarget } from "projects/ngss/src/lib/decorators/action-handler.decorator";
 import { getReducerActionHandlers } from "projects/ngss/src/lib/reducers/reducers-action-handlers-getter.const";
 import { ReducersSubscriptionHandlerService } from "projects/ngss/src/lib/reducers/reducers-subscription-handler.service";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
@@ -44,7 +44,7 @@ export abstract class StoreSignalReducer<T> implements ReducerInterface<T> {
     actionHandlersWithOptions.forEach(({ actionHandler, options }) => {
       options?.completePreviousObservables && this.reducersSubscriptionHandlerService.completeSubscriptions(type);
 
-      const actionResult = actionHandler(this.getActionHandlerContext(), action?.getPayload());
+      const actionResult = (this as unknown as Record<string, ActionHandlerTarget>)?.[actionHandler](this.getActionHandlerContext(), action?.getPayload());
       if (actionResult) {
         const subscription = actionResult.subscribe();
         this.reducersSubscriptionHandlerService.addSubscription(type, subscription);

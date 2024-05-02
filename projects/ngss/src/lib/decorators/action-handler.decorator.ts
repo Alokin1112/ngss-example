@@ -13,7 +13,7 @@ export interface ActionHandlerOptions {
 }
 
 export interface ActionHandlerWithOptions {
-  actionHandler: ActionHandlerTarget,
+  actionHandler: string,
   options?: ActionHandlerOptions,
 }
 
