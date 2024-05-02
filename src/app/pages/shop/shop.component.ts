@@ -6,12 +6,14 @@ import { ShopItem } from '@pages/shop/interfaces/shop-item.interface';
 import { GetShopItems } from '@pages/shop/store/shop.store.actions';
 import { ShopReducer } from '@pages/shop/store/shop.store.reducer';
 import { SignalSelector, Store } from 'ngss';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ShopItemsListComponent } from '@pages/shop/components/shop-items-list/shop-items-list.component';
 
 @Component({
   selector: 'ds-shop',
   standalone: true,
   imports: [
-    CommonModule, MatButtonModule, MatIconModule
+    CommonModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, ShopItemsListComponent
   ],
   templateUrl: './shop.component.html',
   styleUrl: './shop.component.scss',

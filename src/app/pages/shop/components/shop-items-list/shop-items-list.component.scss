@@ -1,0 +1,32 @@
+:host {
+  display: block;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.price {
+  width: 100%;
+  text-align: right;
+  font-weight: bold;
+  font-size: 22px;
+}
+.aligned__button{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.image {
+  width: 200px;
+}
+
+.image__wrapper{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,0 +1,32 @@
+@for(item of items;track item?.id) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{item?.name}}</mat-card-title>
+      <mat-card-subtitle>{{item?.description}}</mat-card-subtitle>
+    </mat-card-header>
+    <div class="image__wrapper">
+      <img
+        mat-card-image
+        class="image"
+        [src]="item?.image"
+      >
+    </div>
+    <mat-card-content>
+      <div class="price">
+        {{item?.price}} zł
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button
+        mat-stroked-button
+        class="aligned__button"
+        (click)="addItemToCart(item)"
+      >
+        <mat-icon>
+          add_shopping_cart
+        </mat-icon>
+        Dodaj do koszyka
+      </button>
+    </mat-card-actions>
+  </mat-card>
+}
