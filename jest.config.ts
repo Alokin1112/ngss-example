@@ -20,6 +20,7 @@ const config: Config = {
     "@assets/(.*)": "<rootDir>/src/assets/$1",
     "@app/(.*)": "<rootDir>/src/app/$1",
     "@config/(.*)": "<rootDir>/src/config/$1",
+    "projects/ngss/src/lib/(.*)": "<rootDir>projects/ngss/src/lib/$1",
     "uuid": require.resolve('uuid'),
   },
 };
