@@ -9,7 +9,6 @@ import { ShopReducer } from '@pages/shop/store/shop.store.reducer';
 import { DecoratorService, NGSSStoreModule } from 'ngss';
 import { AppComponent } from './app/app.component';
 
-
 bootstrapApplication(AppComponent, {
     providers: [
         importProvidersFrom(BrowserModule, RouterModule.forRoot(appRouting), ServiceWorkerModule.register('ngsw-worker.js', {
