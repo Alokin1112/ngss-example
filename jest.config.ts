@@ -21,6 +21,7 @@ const config: Config = {
     "@app/(.*)": "<rootDir>/src/app/$1",
     "@config/(.*)": "<rootDir>/src/config/$1",
     "projects/ngss/src/lib/(.*)": "<rootDir>projects/ngss/src/lib/$1",
+    "projects/ngss/src/tests/(.*)": "<rootDir>projects/ngss/src/tests/$1",
     "uuid": require.resolve('uuid'),
   },
 };

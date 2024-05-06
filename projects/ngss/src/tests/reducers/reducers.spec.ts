@@ -1,27 +1,15 @@
 import { TestBed } from "@angular/core/testing";
-import { StoreReducer } from "ngss";
-import { ActionClass } from "projects/ngss/src/lib/actions/action.class.implementation";
 import { ReducersSubscriptionHandlerService } from "projects/ngss/src/lib/reducers/reducers-subscription-handler.service";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
+import { DumbReducerTestService } from "projects/ngss/src/tests/reducers/dumb-reducer-test.service";
+import { TestReducer } from "projects/ngss/src/tests/reducers/reducer.class.mock";
+import { TestReducerSignal } from "projects/ngss/src/tests/reducers/reducer.signal.mock";
+import * as ReducerTestUtils from "projects/ngss/src/tests/reducers/reducer.test.utils";
 
 const EACH_REDUCER_IMPLEMENTATION = [
   'ClassReducer',
   'SignalReducer',
-]
-
-interface ReducerValueInterface {
-  count: number;
-}
-
-const InitialState: ReducerValueInterface = {
-  count: 0,
-};
-
-const TestActionType = 'TestAction';
-
-class TestAction extends ActionClass<ReducerValueInterface> {
-  override type = TestActionType;
-}
+];
 
 const getMockedReducersSubscriptionHandlerService = () => {
   const mockAddSubscription = jest.fn();
@@ -44,18 +32,21 @@ const getMockedReducersSubscriptionHandlerService = () => {
 
 const MockReducerSubscriptionHandlerService = getMockedReducersSubscriptionHandlerService();
 
-const ReducerFactory = (storeName: string): ReducerInterface<ReducerValueInterface> => {
-  let reducer: ReducerInterface<ReducerValueInterface>;
+const ReducerFactory = (storeName: string): ReducerInterface<ReducerTestUtils.ReducerValueInterface> => {
+  let reducer: ReducerInterface<ReducerTestUtils.ReducerValueInterface>;
   TestBed.runInInjectionContext(() => {
     switch (storeName) {
       case 'ClassReducer':
-        reducer = new StoreReducer(InitialState);
+        reducer = new TestReducer();
+        break;
       case 'SignalReducer':
-        return new StoreSignal(reducers, config);
+        reducer = new TestReducerSignal();
+        break;
       default:
         throw new Error('Invalid store name');
     }
-  })
+  });
+  return reducer;
 };
 
 
@@ -65,8 +56,36 @@ beforeEach(() => {
       {
         provide: ReducersSubscriptionHandlerService,
         useValue: MockReducerSubscriptionHandlerService,
-      }
+      },
+      DumbReducerTestService
     ]
   });
   jest.clearAllMocks();
+});
+
+describe("Reducer basic tests", () => {
+  it.each(EACH_REDUCER_IMPLEMENTATION)("should create a reducer for $s ", (reducerName) => {
+    let reducer: ReducerInterface<ReducerTestUtils.ReducerValueInterface>;
+    TestBed.runInInjectionContext(() => {
+      reducer = ReducerFactory(reducerName);
+    });
+    expect(reducer).toBeDefined();
+  });
+
+  it.each(EACH_REDUCER_IMPLEMENTATION)("should return properly name for $s", (reducerName) => {
+    let reducer: ReducerInterface<ReducerTestUtils.ReducerValueInterface>;
+    TestBed.runInInjectionContext(() => {
+      reducer = ReducerFactory(reducerName);
+    });
+    expect(reducer.name).toBe(ReducerTestUtils.TEST_REDUCER_NAME);
+  });
+
+
+  it.each(EACH_REDUCER_IMPLEMENTATION)("should return properly initial value for $s", (reducerName) => {
+    let reducer: ReducerInterface<ReducerTestUtils.ReducerValueInterface>;
+    TestBed.runInInjectionContext(() => {
+      reducer = ReducerFactory(reducerName);
+    });
+    expect(reducer.initialValue).toEqual(ReducerTestUtils.InitialState);
+  });
 });
