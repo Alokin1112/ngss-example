@@ -1,5 +1,6 @@
 import { signal, WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Dispatch, Middleware, MiddlewareContext } from 'projects/ngss/src/lib/middleware/middleware.interface';
 import { ActionClass } from 'projects/ngss/src/lib/actions/action.class.implementation';
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
 import { StoreAdditionalConfig } from "projects/ngss/src/lib/store/store-additional-config.interface";
@@ -7,6 +8,7 @@ import { StoreSignal } from 'projects/ngss/src/lib/store/store-signal.class.impl
 import { StoreClass } from "projects/ngss/src/lib/store/store.class.implementation";
 import { Store } from 'projects/ngss/src/lib/store/store.interface';
 import { BehaviorSubject } from "rxjs";
+import { ActionInterface } from 'projects/ngss/src/lib/actions/actions.interface';
 
 const EACH_STORE_IMPLEMENTATION = [
   'ClassStore',
@@ -244,4 +246,31 @@ describe("Select functionallity", () => {
     expect(receivedValue()).toEqual(expectedValue);
   });
 
+});
+
+const getMockMiddleware = (): Middleware<unknown>[] => {
+
+  const middleware1: Middleware<unknown> = jest.fn((context: MiddlewareContext<unknown>) => (next: Dispatch) => (action: ActionInterface<unknown>) => {
+    next(action);
+  });
+  const middleware2: Middleware<unknown> = jest.fn((context: MiddlewareContext<unknown>) => (next: Dispatch) => (action: ActionInterface<unknown>) => {
+    next(action);
+  });
+
+  return [middleware1, middleware2];
+};
+
+describe("Handling middlewares", () => {
+  it.each(EACH_STORE_IMPLEMENTATION)("should call middleware with %s", (storeName) => {
+    const reducersData = getReducersList(2);
+    const reducers = reducersData.map((reducer) => reducer.mockReducer);
+    const middlewares = getMockMiddleware();
+    let store: Store;
+    TestBed.runInInjectionContext(() => {
+      store = StoreFactory(storeName, reducers, { middlewares });
+    });
+    store.dispatch(new TestAction({ count: 1 }));
+    expect(middlewares[0]).toHaveBeenCalledTimes(1);
+    expect(middlewares[1]).toHaveBeenCalledTimes(1);
+  });
 });

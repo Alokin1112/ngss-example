@@ -49,7 +49,7 @@ export abstract class Store {
     };
     const middlewaresWithContext = this.middlewares.map(middleware => middleware(context));
 
-    const firstAction = middlewaresWithContext.reduceRight((next, middleware) => middleware(next), this.actionDispatcher);
+    const firstAction = middlewaresWithContext.reduceRight((next, middleware) => middleware(next), (action: ActionInterface<unknown>) => this.actionDispatcher(action));
     firstAction(action);
   }
 
