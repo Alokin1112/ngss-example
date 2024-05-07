@@ -135,7 +135,7 @@ describe("Basic store functionality", () => {
 });
 
 describe("Select functionallity", () => {
-  it.each([EACH_STORE_IMPLEMENTATION[0]])("should select correct value from the store with %s", (storeName, done) => {
+  it.each(EACH_STORE_IMPLEMENTATION)("should select correct value from the store with %s", (storeName, done) => {
     const reducersData = getReducersList(2);
     const reducers = reducersData.map((reducer) => reducer.mockReducer);
     let store: Store;
@@ -150,7 +150,7 @@ describe("Select functionallity", () => {
     });
   });
 
-  it.each([EACH_STORE_IMPLEMENTATION[0]])("should select correct value after reducers value change from the store with %s", (storeName, done) => {
+  it.each(EACH_STORE_IMPLEMENTATION)("should select correct value after reducers value change from the store with %s", (storeName, done) => {
     const reducersData = getReducersList(2);
     const reducers = reducersData.map((reducer) => reducer.mockReducer);
     let store: Store;
@@ -158,7 +158,11 @@ describe("Select functionallity", () => {
       store = StoreFactory(storeName, reducers, null);
     });
     reducersData.forEach((reducer) => {
-      reducer.stateObservable.next({ count: 1 });
+      if (storeName === 'ClassStore') {
+        reducer.stateObservable.next({ count: 1 });
+      } else {
+        reducer.stateSignal.set({ count: 1 });
+      }
     });
     const receivedValue$ = store.select((state) => state);
     const expectedValue = reducers.reduce((acc, reducer) => ({ ...acc, [reducer.name]: { count: 1 } }), {});
@@ -168,7 +172,7 @@ describe("Select functionallity", () => {
     });
   });
 
-  it.each([EACH_STORE_IMPLEMENTATION[0]])("should select correct value after reducers value change with custom callback from the store with %s", (storeName, done) => {
+  it.each(EACH_STORE_IMPLEMENTATION)("should select correct value after reducers value change with custom callback from the store with %s", (storeName, done) => {
     const reducersData = getReducersList(2);
     const reducers = reducersData.map((reducer) => reducer.mockReducer);
     let store: Store;
@@ -176,7 +180,11 @@ describe("Select functionallity", () => {
       store = StoreFactory(storeName, reducers, null);
     });
     reducersData.forEach((reducer) => {
-      reducer.stateObservable.next({ count: 1 });
+      if (storeName === 'ClassStore') {
+        reducer.stateObservable.next({ count: 1 });
+      } else {
+        reducer.stateSignal.set({ count: 1 });
+      }
     });
     const receivedValue$ = store.select((state) => state.reducer0.count);
     const expectedValue = 1;
@@ -217,7 +225,7 @@ describe("Select functionallity", () => {
     expect(receivedValue()).toEqual(expectedValue);
   });
 
-  it.each([EACH_STORE_IMPLEMENTATION])("should select signal correct value after reducers value change with custom callback from the store with %s", (storeName) => {
+  it.each(EACH_STORE_IMPLEMENTATION)("should select signal return correct value after reducers value change with custom callback from the store with %s", (storeName) => {
     const reducersData = getReducersList(2);
     const reducers = reducersData.map((reducer) => reducer.mockReducer);
     let store: Store;
@@ -225,7 +233,11 @@ describe("Select functionallity", () => {
       store = StoreFactory(storeName, reducers, null);
     });
     reducersData.forEach((reducer) => {
-      reducer.stateObservable.next({ count: 1 });
+      if (storeName === 'ClassStore') {
+        reducer.stateObservable.next({ count: 1 });
+      } else {
+        reducer.stateSignal.set({ count: 1 });
+      }
     });
     const receivedValue = store.selectSignal((state) => state.reducer0.count);
     const expectedValue = 1;

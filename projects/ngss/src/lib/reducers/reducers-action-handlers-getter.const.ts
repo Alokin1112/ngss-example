@@ -1,4 +1,4 @@
-import { ACTION_HANDLER_METADATA_KEY, ACTION_HANDLER_OPTIONS_KEY, ActionHandlerTarget, ActionHandlerWithOptions } from "projects/ngss/src/lib/decorators/action-handler.decorator";
+import { ACTION_HANDLER_METADATA_KEY, ACTION_HANDLER_OPTIONS_KEY, ActionHandlerWithOptions } from "projects/ngss/src/lib/decorators/action-handler.decorator";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
 
 export function getReducerActionHandlers<S, T extends ReducerInterface<S>>(instance: T, type: string): ActionHandlerWithOptions[] {

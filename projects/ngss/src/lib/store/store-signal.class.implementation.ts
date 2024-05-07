@@ -3,7 +3,7 @@ import { toObservable } from "@angular/core/rxjs-interop";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
 import { StoreAdditionalConfig } from "projects/ngss/src/lib/store/store-additional-config.interface";
 import { Store } from "projects/ngss/src/lib/store/store.interface";
-import { map, Observable } from "rxjs";
+import { map, merge, Observable, of } from "rxjs";
 
 export class StoreSignal<S> extends Store {
 
@@ -18,8 +18,9 @@ export class StoreSignal<S> extends Store {
   }
 
   select<T>(callback: (state: S) => T): Observable<T> {
-    return toObservable(this.state$, { injector: this.injector }).pipe(
-      map(callback),
+    const stateAsObservable$ = toObservable(this.state$, { injector: this.injector });
+    return merge(of(this.state$()), stateAsObservable$).pipe(
+      map((state) => callback(state))
     );
   }
 
