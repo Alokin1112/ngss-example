@@ -1,7 +1,11 @@
 @for(item of items;track item?.id) {
   <mat-card>
     <mat-card-header>
-      <mat-card-title>{{item?.name}}</mat-card-title>
+      <mat-card-title>
+        <span class="item__name">
+          {{item?.name}}
+        </span>
+      </mat-card-title>
       <mat-card-subtitle>{{item?.description}}</mat-card-subtitle>
     </mat-card-header>
     <div class="image__wrapper">
@@ -19,7 +23,7 @@
     <mat-card-actions>
       <button
         mat-stroked-button
-        class="aligned__button"
+        class="aligned__button add__item__button"
         (click)="addItemToCart(item)"
       >
         <mat-icon>

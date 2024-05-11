@@ -2,6 +2,7 @@
   <a
     [routerLink]="link"
     mat-icon-button
+    id="back-link"
   >
     <mat-icon>
       arrow_back
@@ -23,7 +24,7 @@
 <div class="content__wrapper">
   <div class="content">
     @for(item of cartItems$(); track $index){
-      <mat-card>
+      <mat-card class="cart__item">
         <div class="card__content">
           <div class="card__content__description">
             <img
@@ -37,7 +38,7 @@
 
           <button
             mat-stroked-button
-            class="aligned__button"
+            class="aligned__button remove__item__button"
             (click)="deleteItemFromCart(item?.id)"
           >
             <mat-icon>
