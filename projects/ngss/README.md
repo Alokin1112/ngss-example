@@ -1,24 +1,76 @@
 # Ngss
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.0.
+It's a simple Angular library implementing Flux Design pattern. Library allows you to use middleware and decide which implementation of Store you want to use: Rxjs or Signal
 
-## Code scaffolding
+## Getting started
 
-Run `ng generate component component-name --project ngss` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project ngss`.
-> Note: Don't forget to add `--project ngss` or else it will be added to the default project in your `angular.json` file. 
+  ### Adding store to **main.ts**  
+  ```ts
+    import { NGSSStoreModule } from 'ngss';
 
-## Build
+      bootstrapApplication(AppComponent, {
+      providers: [
+          importProvidersFrom(BrowserModule, RouterModule.forRoot(appRouting), 
+            NGSSStoreModule.forRoot([TestReducer, ShopReducer], {
+                middlewares: [],  // Potential list of middlewares
+                useSignalStore: true, // Decide if you want yo use signal or observables implementation of store, if not passed observable implementation is used 
+            }),
+          ),
+      ]
+  })
+  ```
+  ### Adding actions  
+  *Preferable naming convention (reducer_name).store.actions.ts*
+  <br/>
+  Example:
 
-Run `ng build ngss` to build the project. The build artifacts will be stored in the `dist/` directory.
+  ```ts
+    export class AddNumber extends ActionClass<number> {
+      override readonly type = "AddNumber";
+    }
+  ```
+  This is example of basic action. You have to Extend *ActionClass*<TypeOfPayload> <br/>
+  Defining :
+  ```ts
+    override readonly type = "AddNumber"
+  ```
+  Is optional, if not passed ClassedName will be interpreted as type, but remember: <br/>
+  **Action type it the only thing which differs handling actions so giving the same type value more than a 1 action can cause unexpected results.**
 
-## Publishing
+  ### Creating reducer  
+  *Preferable naming convention (reducer_name).store.reducer.ts*
+  <br/>
+  Example:
+  ```ts
+  import { Injectable } from "@angular/core";
+  import { AddNumber } from "@app/store/testing.store.actions";
+  import { ActionHandler, ActionHandlerContext, StoreSignalReducer } from "ngss";
+  import { Observable, interval, map, of } from "rxjs";
 
-After building your library with `ng build ngss`, go to the dist folder `cd dist/ngss` and run `npm publish`.
+  export interface TestState {
+    value: number;
+  }
 
-## Running unit tests
+  const initialState: TestState = {
+    value: 0,
+  };
 
-Run `ng test ngss` to execute the unit tests via [Karma](https://karma-runner.github.io).
+  @Injectable({ providedIn: 'root' }) //reducers must be provided in root of application to work correctly
+  export class TestReducer extends StoreSignalReducer<TestState> {
+    readonly name = "test"; //this is the name thanks to which we get access to data from store. For Example store.test.value
+    constructor() {
+      super(initialState);
+    }
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+    @ActionHandler(AddNumber)
+    addNumber(context: ActionHandlerContext<TestState>, payload: number): void {
+      context.patchState({
+        value: context.getState().value + payload
+      });
+    }
+  }
+  ```
+  You can extend **StoreSignalReducer** or **StoreReducer** depending if you want to use signal or rxjs implementation. 
+  <br/>
+  **Remember! Stores and reducers are fully compatibile and provides same API for user you can mix Signal and rxjs implementation choosing between implementation it's like choosing between LinkedList and ArrayList in Java. It might have a performance issue but not a usability one.**
+  ### Selecting Value

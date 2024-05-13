@@ -6,7 +6,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import appRouting from '@app/app.routing';
 import { TestReducer } from '@app/store/testing.store.reducer';
 import { ShopReducer } from '@pages/shop/store/shop.store.reducer';
-import { DecoratorService, NGSSStoreModule } from 'ngss';
+import { NGSSStoreModule } from 'ngss';
 import { AppComponent } from './app/app.component';
 
 bootstrapApplication(AppComponent, {
@@ -26,7 +26,6 @@ bootstrapApplication(AppComponent, {
                 useSignalStore: true,
             }),
         ),
-        DecoratorService,
         provideAnimations(),
     ]
 })
