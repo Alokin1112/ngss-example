@@ -5,7 +5,7 @@ import { ActionHandlerContext, ActionHandlerTarget } from "projects/ngss/src/lib
 import { getReducerActionHandlers } from "projects/ngss/src/lib/reducers/reducers-action-handlers-getter.const";
 import { ReducersSubscriptionHandlerService } from "projects/ngss/src/lib/reducers/reducers-subscription-handler.service";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, isObservable, Observable } from "rxjs";
 
 export abstract class StoreReducer<T> implements ReducerInterface<T> {
   abstract readonly name: string;
@@ -34,7 +34,7 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
   }
 
   reset(): void {
-    this.reducersSubscriptionHandlerService.completeAllSubscriptions()
+    this.reducersSubscriptionHandlerService.completeAllSubscriptions();
     this.state$.next(this.initialValue);
   }
 
@@ -45,7 +45,7 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
       options?.completePreviousObservables && this.reducersSubscriptionHandlerService.completeSubscriptions(type);
 
       const actionResult = (this as unknown as Record<string, ActionHandlerTarget>)?.[actionHandler](this.getActionHandlerContext(), action?.getPayload());
-      if (actionResult) {
+      if (actionResult && isObservable(actionResult)) {
         const subscription = actionResult.subscribe();
         this.reducersSubscriptionHandlerService.addSubscription(type, subscription);
       }

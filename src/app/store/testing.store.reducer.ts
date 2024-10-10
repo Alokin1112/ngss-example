@@ -20,9 +20,12 @@ export class TestReducer extends StoreSignalReducer<TestState> {
 
   @ActionHandler(AddNumber)
   addNumber(context: ActionHandlerContext<TestState>, payload: number): void {
+    console.timeEnd("fromInitToFind");
     context.patchState({
       value: context.getState().value + payload
     });
+
+    console.timeEnd("fromInitToFinish");
   }
 
   @ActionHandler(RemoveNumber)

@@ -5,7 +5,7 @@ import { ActionHandlerContext, ActionHandlerTarget } from "projects/ngss/src/lib
 import { getReducerActionHandlers } from "projects/ngss/src/lib/reducers/reducers-action-handlers-getter.const";
 import { ReducersSubscriptionHandlerService } from "projects/ngss/src/lib/reducers/reducers-subscription-handler.service";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
-import { merge, Observable, of } from "rxjs";
+import { isObservable, merge, Observable, of } from "rxjs";
 
 export abstract class StoreSignalReducer<T> implements ReducerInterface<T> {
   abstract readonly name: string;
@@ -24,7 +24,6 @@ export abstract class StoreSignalReducer<T> implements ReducerInterface<T> {
   getState(): Observable<T> {
     const stateAsObservable$ = toObservable(this.state$, { injector: this.injector });
     return merge(of(this.state$()), stateAsObservable$);
-    return stateAsObservable$;
   }
 
   getStateSignal(): Signal<T> {
@@ -47,7 +46,7 @@ export abstract class StoreSignalReducer<T> implements ReducerInterface<T> {
       options?.completePreviousObservables && this.reducersSubscriptionHandlerService.completeSubscriptions(type);
 
       const actionResult = (this as unknown as Record<string, ActionHandlerTarget>)?.[actionHandler](this.getActionHandlerContext(), action?.getPayload());
-      if (actionResult) {
+      if (actionResult && isObservable(actionResult)) {
         const subscription = actionResult.subscribe();
         this.reducersSubscriptionHandlerService.addSubscription(type, subscription);
       }

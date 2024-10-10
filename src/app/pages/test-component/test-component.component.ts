@@ -35,6 +35,8 @@ export class TestComponentComponent {
   }
 
   increment(): void {
+    console.time("fromInitToFind");
+    console.time("fromInitToFinish");
     this.store.dispatch(new AddNumber(1));
   }
 

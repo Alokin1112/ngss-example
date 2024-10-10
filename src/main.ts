@@ -17,7 +17,10 @@ bootstrapApplication(AppComponent, {
             // or after 30 seconds (whichever comes first).
             registrationStrategy: 'registerWhenStable:30000'
         }),
-            NGSSStoreModule.forRoot([TestReducer, ShopReducer], {
+            NGSSStoreModule.forRoot([
+                ShopReducer,
+                TestReducer,
+            ], {
                 middlewares: [
                     // Mid0,
                     // Mid1,
