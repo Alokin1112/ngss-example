@@ -32,7 +32,7 @@ def copy_template(destination, template, numOfCopies):
 
 # Przykład użycia
 destination_path = 'G:\\Szkola\\Studia\\ngss\\src\\app\\store\\multiple\\copies'
-template_path = 'G:\\Szkola\\Studia\\ngss\src\\app\store\\multiple\\template\\multiple-test.store.reducer.ts'
+template_path = 'G:\\Szkola\\Studia\\ngss\src\\app\store\\multiple\\template\\multiple-test-ngxs-store.reducer.ts'
 num_of_copies = 300
 className = "MultipleReducer"
 

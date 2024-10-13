@@ -35,7 +35,7 @@
         "./src/app/*"
       ],
       "ngss": [
-        "dist/ngss"
+        "./dist/ngss"
       ]
     },
   },

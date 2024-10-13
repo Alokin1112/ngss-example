@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Signal } from '@angular/core';
-import { AddNumber, IntervalAdding, RemoveNumber } from '@app/store/testing.store.actions';
-import { Selector, SignalSelector, Store } from 'ngss';
 import { Observable } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { StoreActionType, StoreHandler } from '@core/interfaces/store-handler.interface';
+import { StoreHandlerFactoryService } from '@core/services/store-handler-factory.service';
+import { Store } from '@ngxs/store';
 
 @Component({
   selector: 'ds-test-component',
@@ -18,41 +19,45 @@ import { MatIconModule } from '@angular/material/icon';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TestComponentComponent {
-  @Selector((state: { test: { value: number } }) => state?.test.value)
-  numberSelector$: Observable<number>;
+  // @Selector((state: { test: { value: number } }) => state?.test.value)
+  // numberSelector$: Observable<number>;
 
-  @SignalSelector((state: { test: { value: number } }) => state?.test.value)
-  numberSignalSelector$: Signal<number>;
+  // @SignalSelector((state: { test: { value: number } }) => state?.test.value)
+  // numberSignalSelector$: Signal<number>;
 
-  numberSignal$: Signal<number>;
+  // numberSignal$: Signal<number>;
   number$: Observable<number>;
+  type: StoreActionType = StoreActionType.NGRX;
+
+  store: StoreHandler;
 
   constructor(
-    private store: Store,
+    private storeHandlerFactoryService: StoreHandlerFactoryService,
   ) {
-    this.number$ = this.store.select((state) => state?.test.value as number);
-    this.numberSignal$ = this.store.selectSignal((state) => state?.test.value as number);
+    this.store = this.storeHandlerFactoryService.get(this.type);
+    this.number$ = this.store.getValue();
+    // this.numberSignal$ = this.store.selectSignal((state) => state?.test.value as number);
   }
 
   increment(): void {
     console.time("fromInitToFind");
     console.time("fromInitToFinish");
-    this.store.dispatch(new AddNumber(1));
+    this.store.add(1);
   }
 
   incrementWithMiddleWare(): void {
-    this.store.dispatch(new AddNumber(2));
+    this.store.add(2);
   }
 
   decrement(): void {
-    this.store.dispatch(new RemoveNumber(1));
+    this.store.remove(1);
   }
 
   interval(): void {
-    this.store.dispatch(new IntervalAdding(1));
+    this.store.interval(1);
   }
 
   reset(): void {
-    this.store.reset();
+    this.store.clear();
   }
 }
