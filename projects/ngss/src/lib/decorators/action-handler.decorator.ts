@@ -14,6 +14,7 @@ export interface ActionHandlerOptions {
 
 export interface ActionHandlerWithOptions {
   actionHandler: string,
+  type: string,
   options?: ActionHandlerOptions,
 }
 

@@ -27,7 +27,7 @@ export class TestComponentComponent {
 
   // numberSignal$: Signal<number>;
   number$: Observable<number>;
-  type: StoreActionType = StoreActionType.NGRX;
+  type: StoreActionType = StoreActionType.CUSTOM;
 
   store: StoreHandler;
 

@@ -1,6 +1,8 @@
 import { inject, Injectable, Injector, Signal } from "@angular/core";
 import { ActionInterface } from "projects/ngss/src/lib/actions/actions.interface";
+import { ActionHandlerWithOptions } from "projects/ngss/src/lib/decorators/action-handler.decorator";
 import { Middleware, MiddlewareContext } from "projects/ngss/src/lib/middleware/middleware.interface";
+import { getAllReducerActionHandlers } from "projects/ngss/src/lib/reducers/reducers-action-handlers-getter.const";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
 import { StoreAdditionalConfig } from "projects/ngss/src/lib/store/store-additional-config.interface";
 import { Observable } from "rxjs";
@@ -10,12 +12,14 @@ export abstract class Store {
 
   protected readonly middlewares: Middleware<unknown>[];
   protected readonly injector = inject(Injector);
+  protected readonly actionReducers: Map<string, ReducerInterface<unknown>[]>;
 
   constructor(
     protected reducers: ReducerInterface<unknown>[],
     protected config: StoreAdditionalConfig
   ) {
     this.middlewares = this.config?.middlewares || [];
+    this.actionReducers = this.getActionReducers(this.reducers);
   }
 
   abstract select<T>(callback: (state: any) => T): Observable<T>;
@@ -54,9 +58,33 @@ export abstract class Store {
   }
 
   protected actionDispatcher = (action: ActionInterface<unknown>): void => {
-    this.reducers.forEach(reducer => {
+    const actionReducers = this.actionReducers.get(action?.getType());
+    actionReducers.forEach(reducer => {
       reducer?.handleAction(action);
     });
   };
+
+  private getActionReducers(reducers: ReducerInterface<unknown>[]): Map<string, ReducerInterface<unknown>[]> {
+    const map = new Map<string, ReducerInterface<unknown>[]>();
+
+    (reducers || []).forEach((reducer) => {
+      this.addAllActionsToMap(map, reducer);
+    });
+    return map;
+  }
+
+  private addAllActionsToMap(map: Map<string, ReducerInterface<unknown>[]>, reducer: ReducerInterface<unknown>): void {
+    const declaredActions = getAllReducerActionHandlers(reducer);
+    (declaredActions || []).forEach((action) => {
+      if (!map.has(action.type)) {
+        map.set(action.type, [reducer]);
+      } else {
+        const declaredReducers = map.get(action.type);
+        if (!declaredReducers.some(declaredReducer => declaredReducer.name === reducer.name)) {
+          map.get(action.type).push(reducer);
+        }
+      }
+    });
+  }
 
 }

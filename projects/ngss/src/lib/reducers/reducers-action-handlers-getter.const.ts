@@ -16,6 +16,7 @@ export function getReducerActionHandlers<S, T extends ReducerInterface<S>>(insta
         ...actionHandlers,
         {
           actionHandler: methodName,
+          type,
           options,
         }
       ];
@@ -23,3 +24,27 @@ export function getReducerActionHandlers<S, T extends ReducerInterface<S>>(insta
   });
   return actionHandlers;
 }
+
+export const getAllReducerActionHandlers = <S, T extends ReducerInterface<S>>(instance: T): ActionHandlerWithOptions[] => {
+  const prototype = Object.getPrototypeOf(instance);
+  const methods = Object.getOwnPropertyNames(prototype) || [];
+
+  let actionHandlers: ActionHandlerWithOptions[] = [];
+  methods?.forEach((methodName) => {
+    const actionHandler = (instance as unknown as Record<string, unknown>)[methodName];
+    const action = Reflect.getMetadata(ACTION_HANDLER_METADATA_KEY, instance, methodName);
+    const options = Reflect.getMetadata(ACTION_HANDLER_OPTIONS_KEY, instance, methodName);
+
+    if (typeof actionHandler === 'function' && action && actionHandler !== instance.constructor) {
+      actionHandlers = [
+        ...actionHandlers,
+        {
+          actionHandler: methodName,
+          type: action,
+          options,
+        }
+      ];
+    }
+  });
+  return actionHandlers;
+};
