@@ -32,12 +32,13 @@ def copy_template(destination, template, numOfCopies):
 
 # Przykład użycia
 destination_path = 'G:\\Szkola\\Studia\\ngss\\src\\app\\store\\multiple\\copies'
-template_path = 'G:\\Szkola\\Studia\\ngss\src\\app\store\\multiple\\template\\multiple-test-ngxs-store.reducer.ts'
+template_path = 'G:\\Szkola\\Studia\\ngss\src\\app\store\\multiple\\template\\multiple-test-ngrx-store.reducer.ts'
 num_of_copies = 300
-className = "MultipleReducer"
+className = "multipleReducer"
 
 
 copy_template(destination_path, template_path, num_of_copies)
 
 for i in range(1, num_of_copies + 1):
-  print(className + str(i)+ ',')
+#   print(className + str(i)+ ',')
+    print(className+str(i)+": " + className + str(i)+",")
