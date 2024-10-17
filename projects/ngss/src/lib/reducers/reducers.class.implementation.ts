@@ -1,8 +1,8 @@
 import { inject, Injector, Signal } from "@angular/core";
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActionInterface } from "projects/ngss/src/lib/actions/actions.interface";
-import { ActionHandlerContext, ActionHandlerTarget } from "projects/ngss/src/lib/decorators/action-handler.decorator";
-import { getReducerActionHandlers } from "projects/ngss/src/lib/reducers/reducers-action-handlers-getter.const";
+import { ActionHandlerContext, ActionHandlerTarget, ActionHandlerWithOptions } from "projects/ngss/src/lib/decorators/action-handler.decorator";
+import { getAllReducerActionHandlers } from "projects/ngss/src/lib/reducers/reducers-action-handlers-getter.const";
 import { ReducersSubscriptionHandlerService } from "projects/ngss/src/lib/reducers/reducers-subscription-handler.service";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
 import { BehaviorSubject, isObservable, Observable } from "rxjs";
@@ -10,6 +10,7 @@ import { BehaviorSubject, isObservable, Observable } from "rxjs";
 export abstract class StoreReducer<T> implements ReducerInterface<T> {
   abstract readonly name: string;
   readonly initialValue: T = null;
+  protected readonly actionsMap: Map<string, ActionHandlerWithOptions[]>;
 
   private readonly injector = inject(Injector);
   private readonly reducersSubscriptionHandlerService = inject(ReducersSubscriptionHandlerService);
@@ -19,6 +20,7 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
   constructor(initialValue: T) {
     this.initialValue = initialValue;
     this.state$ = new BehaviorSubject<T>(this.initialValue);
+    this.actionsMap = this.getActionReducers();
   }
 
   getState(): Observable<T> {
@@ -40,7 +42,7 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
 
   handleAction<A>(action: ActionInterface<A>): void {
     const type = action?.getType();
-    const actionHandlersWithOptions = getReducerActionHandlers(this, type) || [];
+    const actionHandlersWithOptions = this.actionsMap.get(type) || [];
     actionHandlersWithOptions.forEach(({ actionHandler, options }) => {
       options?.completePreviousObservables && this.reducersSubscriptionHandlerService.completeSubscriptions(type);
 
@@ -58,6 +60,20 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
       setState: (state: T) => this.state$.next(state),
       patchState: (state: Partial<T>) => this.state$.next({ ...this.state$.getValue(), ...state }),
     };
+  }
+
+  private getActionReducers(): Map<string, ActionHandlerWithOptions[]> {
+    const actions = getAllReducerActionHandlers(this);
+    const map = new Map<string, ActionHandlerWithOptions[]>();
+
+    (actions || []).forEach((actionHandler) => {
+      const type = actionHandler.type;
+      if (!map.has(type)) {
+        map.set(type, []);
+      }
+      map.get(type).push(actionHandler);
+    });
+    return map;
   }
 
 }
