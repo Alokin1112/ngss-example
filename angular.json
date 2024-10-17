@@ -48,7 +48,12 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/manifest.webmanifest"
+              "src/manifest.webmanifest",
+              {
+                "glob": "**/*",
+                "input": "dist/ngss/assets",
+                "output": "/assets/ngss"
+              }
             ],
             "styles": [
               "@angular/material/prebuilt-themes/purple-green.css",
