@@ -3,8 +3,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActionInterface } from "projects/ngss/src/lib/actions/actions.interface";
 import { ActionHandlerContext, ActionHandlerTarget, ActionHandlerWithOptions } from "projects/ngss/src/lib/decorators/action-handler.decorator";
 import { getAllReducerActionHandlers } from "projects/ngss/src/lib/reducers/reducers-action-handlers-getter.const";
+import { DEFAULT_REDUCER_OPTIONS, ReducerOptions } from "projects/ngss/src/lib/reducers/reducers-options.interface";
 import { ReducersSubscriptionHandlerService } from "projects/ngss/src/lib/reducers/reducers-subscription-handler.service";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
+import { RevertChangesOptions } from "projects/ngss/src/lib/revert-changes/revert-changes-options.interface";
+import { RevertChangesService } from "projects/ngss/src/lib/revert-changes/revert-changes-service.interface";
+import { RevertChangesStatus } from "projects/ngss/src/lib/revert-changes/revert-changes-status.interface";
+import { RevertChangesFactoryService } from "projects/ngss/src/public-api";
 import { BehaviorSubject, isObservable, Observable } from "rxjs";
 
 export abstract class StoreReducer<T> implements ReducerInterface<T> {
@@ -13,14 +18,23 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
   protected readonly actionsMap: Map<string, ActionHandlerWithOptions[]>;
 
   private readonly injector = inject(Injector);
+  private readonly revertChangesService: RevertChangesService<T>;
   private readonly reducersSubscriptionHandlerService = inject(ReducersSubscriptionHandlerService);
 
   private state$: BehaviorSubject<T>;
 
-  constructor(initialValue: T) {
+  constructor(initialValue: T, options: Partial<ReducerOptions> = {}) {
     this.initialValue = initialValue;
     this.state$ = new BehaviorSubject<T>(this.initialValue);
     this.actionsMap = this.getActionReducers();
+
+    const fullOptions: ReducerOptions = {
+      ...DEFAULT_REDUCER_OPTIONS,
+      ...(options || {}),
+    };
+
+    this.revertChangesService = inject(RevertChangesFactoryService).get<T>(fullOptions?.revert);
+    this.revertChangesService.saveInitialState(this.initialValue);
   }
 
   getState(): Observable<T> {
@@ -46,7 +60,7 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
     actionHandlersWithOptions.forEach(({ actionHandler, options }) => {
       options?.completePreviousObservables && this.reducersSubscriptionHandlerService.completeSubscriptions(type);
 
-      const actionResult = (this as unknown as Record<string, ActionHandlerTarget>)?.[actionHandler](this.getActionHandlerContext(), action?.getPayload());
+      const actionResult = (this as unknown as Record<string, ActionHandlerTarget>)?.[actionHandler](this.getActionHandlerContext(action), action?.getPayload());
       if (actionResult && isObservable(actionResult)) {
         const subscription = actionResult.subscribe();
         this.reducersSubscriptionHandlerService.addSubscription(type, subscription);
@@ -54,11 +68,22 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
     });
   }
 
-  private getActionHandlerContext(): ActionHandlerContext<T> {
+  revert(options: RevertChangesOptions): RevertChangesStatus {
+    return this.revertChangesService.revertChanges(options, (state: T) => this.state$.next(state));
+  }
+
+  private getActionHandlerContext(action: ActionInterface<unknown>): ActionHandlerContext<T> {
     return {
       getState: () => this.state$.getValue(),
-      setState: (state: T) => this.state$.next(state),
-      patchState: (state: Partial<T>) => this.state$.next({ ...this.state$.getValue(), ...state }),
+      setState: (state: T) => {
+        this.state$.next(state);
+        this.revertChangesService.saveChanges(state, action);
+      },
+      patchState: (state: Partial<T>) => {
+        const newState: T = { ...this.state$.getValue(), ...state };
+        this.state$.next(newState);
+        this.revertChangesService.saveChanges(newState, action);
+      },
     };
   }
 

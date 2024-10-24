@@ -6,7 +6,7 @@ import { StoreAdditionalConfig } from "projects/ngss/src/lib/store/store-additio
 import { StoreClass } from "projects/ngss/src/lib/store/store.class.implementation";
 import { Store } from 'projects/ngss/src/lib/store/store.interface';
 import { WebAssemblyService } from "projects/ngss/src/lib/web-assembly/web-assembly.service";
-import { StoreSignal } from "projects/ngss/src/public-api";
+import { RevertChangesFactoryService, StoreSignal } from "projects/ngss/src/public-api";
 
 @NgModule({
 
@@ -31,6 +31,7 @@ export class NGSSStoreModule {
         NgssStoreProviderFn(reducers, config),
         DecoratorService,
         ReducersSubscriptionHandlerService,
+        RevertChangesFactoryService,
         WebAssemblyService,
       ]
     };

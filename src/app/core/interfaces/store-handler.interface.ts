@@ -1,9 +1,11 @@
+import { RevertChangesOptions } from "ngss";
 import { Observable } from "rxjs";
 
 export interface StoreHandler {
   add(val: number): void;
   remove(val: number): void;
   interval(val: number): void;
+  revert(clazz: unknown, options: RevertChangesOptions): void;
   clear(): void;
   getValue(): Observable<number>
 }

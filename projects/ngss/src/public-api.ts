@@ -24,3 +24,9 @@ export * from 'projects/ngss/src/lib/decorators/decorator.service';
 
 //middleware
 export * from 'projects/ngss/src/lib/middleware/middleware.interface';
+
+//revert-changes
+export * from 'projects/ngss/src/lib/revert-changes/revert-changes-options.interface';
+export * from 'projects/ngss/src/lib/revert-changes/revert-changes-status.interface';
+export * from 'projects/ngss/src/lib/revert-changes/revert-changes-service.interface';
+export * from 'projects/ngss/src/lib/revert-changes/services/revert-changes-factory.service';

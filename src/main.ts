@@ -12,13 +12,12 @@ import { NgxsModule } from '@ngxs/store';
 import { ShopReducer } from '@pages/shop/store/shop.store.reducer';
 import { NGSSStoreModule } from 'ngss';
 import { AppComponent } from './app/app.component';
+import { MultipleReducer1 } from '@app/store/multiple/copies/multiple-test.store.reducer_1';
 
 bootstrapApplication(AppComponent, {
     providers: [
         importProvidersFrom(BrowserModule, RouterModule.forRoot(appRouting), ServiceWorkerModule.register('ngsw-worker.js', {
             enabled: !isDevMode(),
-            // Register the ServiceWorker as soon as the application is stable
-            // or after 30 seconds (whichever comes first).
             registrationStrategy: 'registerWhenStable:30000'
         }),
             NgxsModule.forRoot([
@@ -30,6 +29,7 @@ bootstrapApplication(AppComponent, {
             NGSSStoreModule.forRoot([
                 ShopReducer,
                 TestReducerNgss,
+                MultipleReducer1,
             ], {
                 middlewares: [
                     // Mid0,

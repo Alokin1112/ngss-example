@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { NgxsAddNumber, NgxsIntervalAdding, NgxsRemoveNumber } from '@app/store/ngxs/ngxs-testing.store.actions';
 import { StoreHandler } from '@core/interfaces/store-handler.interface';
 import { Store } from '@ngxs/store';
+import { RevertChangesOptions } from 'ngss';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -34,6 +35,9 @@ export class NgxsStoreHandlerService implements StoreHandler {
     });
   }
 
-
+  revert(clazz: unknown, options: RevertChangesOptions): void {
+    alert('Not implemented');
+    return;
+  }
 
 }
