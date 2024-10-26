@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { ActionInterface, RevertChangesOptions } from 'ngss';
+import { ActionInterface } from 'projects/ngss/src/lib/actions/actions.interface';
+import { RevertChangesOptions } from "projects/ngss/src/lib/revert-changes/revert-changes-options.interface";
 import { RevertChangesService } from 'projects/ngss/src/lib/revert-changes/revert-changes-service.interface';
 import { RevertChangesStatus } from 'projects/ngss/src/public-api';
 

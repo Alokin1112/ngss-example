@@ -2,6 +2,7 @@ import { Injector, ModuleWithProviders, NgModule, Optional, Provider, ProviderTo
 import { DecoratorService } from "projects/ngss/src/lib/decorators/decorator.service";
 import { ReducersSubscriptionHandlerService } from "projects/ngss/src/lib/reducers/reducers-subscription-handler.service";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
+import { RevertChangesSavedStateFactoryService } from "projects/ngss/src/lib/revert-changes/revert-changes-saved-state/revert-changes-saved-state-factory.service";
 import { StoreAdditionalConfig } from "projects/ngss/src/lib/store/store-additional-config.interface";
 import { StoreClass } from "projects/ngss/src/lib/store/store.class.implementation";
 import { Store } from 'projects/ngss/src/lib/store/store.interface';
@@ -32,6 +33,7 @@ export class NGSSStoreModule {
         DecoratorService,
         ReducersSubscriptionHandlerService,
         RevertChangesFactoryService,
+        RevertChangesSavedStateFactoryService,
         WebAssemblyService,
       ]
     };

@@ -66,6 +66,6 @@ export class TestComponentComponent {
   }
 
   revert(): void {
-    this.store.revert(TestReducer, { byNumOfActions: 2 });
+    this.store.revert(TestReducer, { byNumOfActions: 1 });
   }
 }

@@ -29,8 +29,10 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
     this.actionsMap = this.getActionReducers();
 
     const fullOptions: ReducerOptions = {
-      ...DEFAULT_REDUCER_OPTIONS,
-      ...(options || {}),
+      revert: {
+        ...DEFAULT_REDUCER_OPTIONS.revert,
+        ...(options.revert || {}),
+      }
     };
 
     this.revertChangesService = inject(RevertChangesFactoryService).get<T>(fullOptions?.revert);
