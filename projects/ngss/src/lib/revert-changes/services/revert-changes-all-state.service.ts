@@ -21,7 +21,6 @@ export class RevertChangesAllStateService<T> implements RevertChangesService<T> 
     this.stateService.pushState({ data: newState, dateTime: new Date(), actionType: handledAction.getType() });
 
     this.shiftArrayIfNeeded();
-    console.log(this.stateService.getSavedState());
   }
 
   revertChanges(options: RevertChangesOptions, stateChangeCallback: StateChangeCallback<T>): RevertChangesStatus {

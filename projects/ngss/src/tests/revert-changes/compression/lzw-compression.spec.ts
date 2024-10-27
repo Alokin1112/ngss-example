@@ -21,4 +21,21 @@ describe('LZW Compression', () => {
     const decoded = lzw_decode<typeof original>(encoded);
     expect(decoded).toEqual(original);
   });
+
+  it('should encode and decode complex data correctly', () => {
+    const original = {
+      name: "John Doe",
+      age: 30,
+      city: "New York",
+      male: true,
+      friends: [
+        { name: "Jane Doe", age: 28, city: "Los Angeles" },
+        { name: "Alice", age: 25, city: "Chicago" }
+      ]
+    }
+    const encoded = lzw_encode(original);
+    const decoded = lzw_decode<typeof original>(encoded);
+    expect(decoded).toEqual(original);
+  });
+
 });
