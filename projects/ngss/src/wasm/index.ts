@@ -1,40 +1,33 @@
-export function add(a: i32, b: i32): i32 {
-  return a + b;
-}
-
 export function lzwEncode(input: string): string {
-  const dictionary: Map<string, i32> = new Map<string, i32>();
-  let dictSize: i32 = 256;
+  // Initialize the dictionary
+  const dictionary = new Map<string, i32>();
+  let dictSize = 256;
   for (let i = 0; i < 256; i++) {
     dictionary.set(String.fromCharCode(i), i);
   }
 
-  let w: string = "";
-  const result: i32[] = [];
+  let currentStr = "";
+  const output = new Array<i32>();
 
+  // Iterate through input string
   for (let i = 0; i < input.length; i++) {
-    const c: string = input.charAt(i);
-    const wc: string = w + c;
-    if (dictionary.has(wc)) {
-      w = wc;
+    const currentChar = input[i];
+    const combinedStr = currentStr + currentChar;
+
+    if (dictionary.has(combinedStr)) {
+      currentStr = combinedStr;
     } else {
-      const wCode = dictionary.get(w);
-      if (wCode !== null) {
-        result.push(wCode);
-      }
-      dictionary.set(wc, dictSize++);
-      w = c;
+      output.push(dictionary.get(currentStr)!);
+      dictionary.set(combinedStr, dictSize++);
+      currentStr = currentChar;
     }
   }
 
-  if (w !== "") {
-    const wCode = dictionary.get(w);
-    if (wCode !== null) {
-      result.push(wCode);
-    }
+  if (currentStr !== "") {
+    output.push(dictionary.get(currentStr)!);
   }
 
-  return result.map<string>(code => String.fromCharCode(code)).join("");
+  return output.map<string>(code => String.fromCharCode(code)).join("");
 }
 
 export function lzwDecode(input: string): string {

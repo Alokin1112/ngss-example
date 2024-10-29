@@ -1,5 +1,6 @@
 export interface WebAssemblyModule {
-  add(a: number, b: number): number;
-  lzwEncode(input: string): string;
-  lzwDecode(encodedStr: string): string;
+  lzwEncode(input: number): number;
+  lzwDecode(encodedStr: number): number;
+  __newString(str: string): number;
+  __getString(ptr: number): string;
 }

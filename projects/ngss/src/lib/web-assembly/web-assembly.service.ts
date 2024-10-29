@@ -1,45 +1,70 @@
 import { Injectable } from '@angular/core';
-import { WebAssemblyModule } from 'projects/ngss/src/lib/web-assembly/web-assembly.interface';
+import { ASUtil, instantiate, ResultObject } from '@assemblyscript/loader';
+import { Observable, ReplaySubject, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebAssemblyService {
 
-  private wasmModule: WebAssemblyModule;
+  private ready: ReplaySubject<void> = new ReplaySubject<void>(1);
+  private _isReady = false;
+
+  private wasmModule: ResultObject & {
+    exports: ASUtil & Record<string, unknown>;
+  };
+  private memory: WebAssembly.Memory;
 
   constructor() {
+    this.memory = new WebAssembly.Memory({ initial: 2, maximum: 2 });
     void this.loadWasmModule();
   }
 
-  add(a: number, b: number): number {
-    return this.wasmModule.add(a, b);
+  isReady(): boolean {
+    return this._isReady;
+  }
+
+  waitForReady(): Observable<void> {
+    return this.ready.asObservable().pipe(take(1));
   }
 
   lzwEncode(input: string): string {
-    return this.wasmModule?.lzwEncode(input) || input;
+    if (!this.wasmModule) {
+      return '';
+    }
+    const { __newString, __getString } = this.wasmModule.exports;
+    const __lzwEncode = this.wasmModule.exports?.['lzwEncode'] as (inputStrPtr: number) => number;
+
+    const inputStrPtr = __newString(input);
+    const outputStrPtr = __lzwEncode(inputStrPtr);
+    const outputStr = __getString(outputStrPtr);
+
+    return outputStr;
   }
 
-  lzwDecode(encodedStr: string): string {
-    return this.wasmModule?.lzwDecode(encodedStr) || encodedStr;
+  lzwDecode(input: string): string {
+    if (!this.wasmModule) {
+      return '';
+    }
+    const { __newString, __getString } = this.wasmModule.exports;
+    const __lzwDecode = this.wasmModule.exports?.['lzwDecode'] as (inputStrPtr: number) => number;
+
+    const inputStrPtr = __newString(input);
+    const outputStrPtr = __lzwDecode(inputStrPtr);
+    const outputStr = __getString(outputStrPtr);
+
+    return outputStr;
   }
 
   private async loadWasmModule() {
     try {
-      const response = await fetch('/assets/ngss/wasm.wasm');
-      const buffer = await response.arrayBuffer();
-      const importObject = {
-        env: {
-          abort(_msg: unknown, _file: unknown, line: unknown, column: unknown) {
-            console.error("abort called at main.ts:" + line + ":" + column);
-          },
-          memory: new WebAssembly.Memory({ initial: 256, maximum: 256 }),
-        }
-      }; // No special imports needed
-      const wasmModule = await WebAssembly.instantiate(buffer, importObject);
-      this.wasmModule = wasmModule.instance.exports as unknown as WebAssemblyModule;
+      //TODO: Sprawdzić czy można wywalic biblioteke
+      this.wasmModule = await instantiate(fetch('/assets/ngss/wasm.wasm'));
+      this.ready.next();
+      this._isReady = true;
     } catch (error) {
       console.error('Failed to load WASM module', error);
     }
   }
+
 }

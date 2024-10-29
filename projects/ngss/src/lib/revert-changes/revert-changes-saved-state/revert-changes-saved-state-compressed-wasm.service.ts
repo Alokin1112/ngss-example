@@ -11,11 +11,13 @@ export class RevertChangesSavedStateCompressedWasmService<T> implements RevertCh
   ) { }
 
   pushState(state: RevertChangesSavedState<T>): void {
-    this.savedState.push({
-      ...state,
-      data: this.encodeData(state?.data || {} as T)
-    });
-    console.log('pushState', this.savedState);
+    if (this.wasmService.isReady()) {
+      this.pushStateSync(state);
+    } else {
+      this.wasmService.waitForReady().subscribe(() => {
+        this.pushStateSync(state);
+      });
+    }
   }
 
   getSavedState(): RevertChangesSavedState<T>[] {
@@ -52,6 +54,15 @@ export class RevertChangesSavedStateCompressedWasmService<T> implements RevertCh
 
   remove(start: number, end: number): void {
     this.savedState.splice(start, end - start);
+  }
+
+  private pushStateSync(state: RevertChangesSavedState<T>): void {
+    this.savedState.push({
+      ...state,
+      data: this.encodeData(state?.data || {} as T)
+    });
+
+    console.log(this.savedState);
   }
 
 

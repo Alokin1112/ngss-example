@@ -5,10 +5,21 @@ import { Observable, interval, map, of } from "rxjs";
 
 export interface TestState {
   value: number;
+  age: number;
+  city: string
+  male: boolean;
+  friends: { name: string; age: number; city: string }[];
 }
 
 const initialState: TestState = {
   value: 0,
+  age: 30,
+  city: "New York",
+  male: true,
+  friends: [
+    { name: "Jane Doe", age: 28, city: "Los Angeles" },
+    { name: "Alice", age: 25, city: "Chicago" }
+  ]
 };
 
 @Injectable({ providedIn: 'root' })
