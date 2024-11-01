@@ -4,8 +4,9 @@ import { ReducerRevertOptions } from 'projects/ngss/src/lib/reducers/reducers-op
 import { RevertChangesOptions } from 'projects/ngss/src/lib/revert-changes/revert-changes-options.interface';
 import { RevertChangesSavedStateService, RevertChangesService, StateChangeCallback } from 'projects/ngss/src/lib/revert-changes/revert-changes-service.interface';
 import { RevertChangesStatus } from 'projects/ngss/src/lib/revert-changes/revert-changes-status.interface';
+import { getDiff } from 'recursive-diff'
 
-export class RevertChangesAllStateService<T> implements RevertChangesService<T> {
+export class RevertChangesOnlyChangedService<T> implements RevertChangesService<T> {
 
 
   constructor(
@@ -22,6 +23,8 @@ export class RevertChangesAllStateService<T> implements RevertChangesService<T> 
     this.stateService.pushState({ data: newState, dateTime: new Date(), actionType: handledAction.getType() });
 
     this.shiftArrayIfNeeded();
+    const prevData = this.stateService.get(this.stateService.getLength() - 2, this.stateService.getLength() - 1)[0]?.data;
+    console.log(getDiff(prevData, newState));
   }
 
   revertChanges(options: RevertChangesOptions, stateChangeCallback: StateChangeCallback<T>): RevertChangesStatus {

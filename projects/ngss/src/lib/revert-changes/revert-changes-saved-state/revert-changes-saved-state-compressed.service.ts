@@ -52,6 +52,9 @@ export class RevertChangesSavedStateCompressedService<T> implements RevertChange
     this.savedState.splice(start, end - start);
   }
 
+  clear(): void {
+    this.savedState = [];
+  }
 
   private decodeData(data: string): T {
     return lzw_decode<T>(data);

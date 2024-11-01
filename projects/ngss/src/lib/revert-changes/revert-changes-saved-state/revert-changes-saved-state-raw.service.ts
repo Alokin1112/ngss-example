@@ -8,6 +8,9 @@ export class RevertChangesSavedStateRawService<T> implements RevertChangesSavedS
 
   pushState(state: RevertChangesSavedState<T>): void {
     this.savedState.push(state);
+    // if (this.savedState.length > 2) {
+    //   console.log(diffStrings(JSON.stringify(this.savedState[this.savedState.length - 2].data), JSON.stringify(this.savedState[this.savedState.length - 1].data)));
+    // }
   }
 
   getSavedState(): RevertChangesSavedState<T>[] {
@@ -35,6 +38,10 @@ export class RevertChangesSavedStateRawService<T> implements RevertChangesSavedS
 
   remove(start: number, end: number): void {
     this.savedState.splice(start, end - start);
+  }
+
+  clear(): void {
+    this.savedState = [];
   }
 
 }

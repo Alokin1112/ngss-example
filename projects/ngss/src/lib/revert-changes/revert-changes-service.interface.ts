@@ -4,7 +4,7 @@ import { RevertChangesStatus } from "projects/ngss/src/lib/revert-changes/revert
 
 export interface RevertChangesService<T> {
   saveInitialState(state: T): void,
-  saveChanges<A>(newState: T, handledAction: ActionInterface<A>): void,
+  saveChanges<A>(newState: T, handledAction: ActionInterface<A>, changes?: Partial<T>): void,
   revertChanges(options: RevertChangesOptions, stateChangeCallback: StateChangeCallback<T>): RevertChangesStatus;
 }
 
@@ -16,10 +16,11 @@ export interface RevertChangesSavedStateService<T> {
   saveAt(index: number, state: RevertChangesSavedState<T>): void,
   get(start: number, end: number): RevertChangesSavedState<T>[],
   remove(start: number, end: number): void,
+  clear(): void
 }
 
 
-export type RevertChangesServiceType = 'NONE' | 'ALL_STATE' | 'ONLY_CHANGED' | 'ONLY_CHANGED_WEB_ASSEMBLY';
+export type RevertChangesServiceType = 'NONE' | 'ALL_STATE' | 'ONLY_CHANGES_NAIVE' | 'ONLY_CHANGED' | 'ONLY_CHANGED_WEB_ASSEMBLY';
 export type RevertChangesStateType = 'RAW' | 'COMPRESSED' | 'COMPRESSED_WEB_ASSEMBLY';
 
 export type StateChangeCallback<T> = (state: T) => void;

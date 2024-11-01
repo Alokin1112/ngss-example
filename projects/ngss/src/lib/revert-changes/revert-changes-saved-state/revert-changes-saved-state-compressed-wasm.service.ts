@@ -56,13 +56,15 @@ export class RevertChangesSavedStateCompressedWasmService<T> implements RevertCh
     this.savedState.splice(start, end - start);
   }
 
+  clear(): void {
+    this.savedState = [];
+  }
+
   private pushStateSync(state: RevertChangesSavedState<T>): void {
     this.savedState.push({
       ...state,
       data: this.encodeData(state?.data || {} as T)
     });
-
-    console.log(this.savedState);
   }
 
 

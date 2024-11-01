@@ -81,10 +81,10 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
         this.state$.next(state);
         this.revertChangesService.saveChanges(state, action);
       },
-      patchState: (state: Partial<T>) => {
-        const newState: T = { ...this.state$.getValue(), ...state };
+      patchState: (stateChanges: Partial<T>) => {
+        const newState: T = { ...this.state$.getValue(), ...stateChanges };
         this.state$.next(newState);
-        this.revertChangesService.saveChanges(newState, action);
+        this.revertChangesService.saveChanges(newState, action, stateChanges);
       },
     };
   }

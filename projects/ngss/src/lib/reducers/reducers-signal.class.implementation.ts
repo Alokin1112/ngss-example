@@ -80,10 +80,10 @@ export abstract class StoreSignalReducer<T> implements ReducerInterface<T> {
         this.state$.set(state);
         this.revertChangesService.saveChanges(state, action);
       },
-      patchState: (state: Partial<T>) => {
-        const newState: T = { ...this.state$(), ...state };
+      patchState: (stateChanges: Partial<T>) => {
+        const newState: T = { ...this.state$(), ...stateChanges };
         this.state$.set(newState);
-        this.revertChangesService.saveChanges(newState, action);
+        this.revertChangesService.saveChanges(newState, action, stateChanges);
       },
     };
   }

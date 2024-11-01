@@ -26,14 +26,14 @@ const initialState: TestState = {
 export class TestReducer extends StoreReducer<TestState> {
   readonly name = "test";
   constructor() {
-    super(initialState, { revert: { savePreviousStateType: 'ALL_STATE', maxPreviousStates: 5, savePreviousStateSaveType: "COMPRESSED_WEB_ASSEMBLY" } });
+    super(initialState, { revert: { savePreviousStateType: 'ONLY_CHANGED', maxPreviousStates: 5, savePreviousStateSaveType: "RAW" } });
   }
 
   @ActionHandler(AddNumber)
   addNumber(context: ActionHandlerContext<TestState>, payload: number): void {
     console.timeEnd("fromInitToFind");
     context.patchState({
-      value: context.getState().value + payload
+      value: context.getState().value + payload,
     });
 
     console.timeEnd("fromInitToFinish");
