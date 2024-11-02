@@ -56,6 +56,23 @@ export class WebAssemblyService {
     return outputStr;
   }
 
+  getChanges(a: unknown, b: unknown): void {
+    if (!this.wasmModule) {
+      return;
+    }
+    const aStringified = JSON.stringify(a, Object.keys(a).sort());
+    const bStringified = JSON.stringify(b, Object.keys(b).sort());
+
+    const { __newString, __getString, __getArray, } = this.wasmModule.exports;
+    const __getChanges = this.wasmModule.exports?.['getChanges'] as (aStrPtr: number, bStrPtr: number) => number;
+
+    const aStrPtr = __newString(aStringified);
+    const bStrPtr = __newString(bStringified);
+    const changesPtr = __getChanges(aStrPtr, bStrPtr);
+    const changes = __getArray(changesPtr);
+    console.log(changes.map((ptr) => JSON.parse(__getString(ptr))));
+  }
+
   private async loadWasmModule() {
     try {
       //TODO: Sprawdzić czy można wywalic biblioteke
