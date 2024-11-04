@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ASUtil, instantiate, ResultObject } from '@assemblyscript/loader';
+import { RevertChangesStringStateOperations } from 'projects/ngss/src/lib/revert-changes/revert-changes-string-state-operations.interface';
 import { Observable, ReplaySubject, take } from 'rxjs';
 
 @Injectable({
@@ -56,9 +57,9 @@ export class WebAssemblyService {
     return outputStr;
   }
 
-  getChanges(a: unknown, b: unknown): void {
+  getChanges(a: unknown, b: unknown): RevertChangesStringStateOperations[] {
     if (!this.wasmModule) {
-      return;
+      return [];
     }
     const aStringified = JSON.stringify(a, Object.keys(a).sort());
     const bStringified = JSON.stringify(b, Object.keys(b).sort());
@@ -70,7 +71,7 @@ export class WebAssemblyService {
     const bStrPtr = __newString(bStringified);
     const changesPtr = __getChanges(aStrPtr, bStrPtr);
     const changes = __getArray(changesPtr);
-    console.log(changes.map((ptr) => JSON.parse(__getString(ptr))));
+    return changes.map((ptr) => JSON.parse(__getString(ptr)) as RevertChangesStringStateOperations);
   }
 
   private async loadWasmModule() {

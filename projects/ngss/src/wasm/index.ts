@@ -84,19 +84,19 @@ class Edit {
     let operation: string;
     switch (this.operation) {
       case EditOperation.Insert:
-        operation = "Insert";
+        operation = "add";
         break;
       case EditOperation.Delete:
-        operation = "Delete";
+        operation = "del";
         break;
       case EditOperation.Substitute:
-        operation = "Substitute";
+        operation = "sub";
         break;
       default:
-        operation = "Unknown";
+        operation = "unk";
         break;
     }
-    return `{"operation": "${operation}", "char": "${this.char}", "position": ${this.position.toString()}}`;
+    return `{"op": "${operation}", "char": "${this.char}", "pos": ${this.position.toString()}}`;
   }
 }
 

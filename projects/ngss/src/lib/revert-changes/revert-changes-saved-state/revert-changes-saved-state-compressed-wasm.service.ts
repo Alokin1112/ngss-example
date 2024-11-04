@@ -18,8 +18,7 @@ export class RevertChangesSavedStateCompressedWasmService<T> implements RevertCh
         this.pushStateSync(state);
       });
     }
-
-    this.wasmService.getChanges({ aging: 5 }, { age: 6 });
+    this.wasmService.getChanges({ ag: 5 }, { age: 6 });
   }
 
   getSavedState(): RevertChangesSavedState<T>[] {
