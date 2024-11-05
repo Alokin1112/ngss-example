@@ -1,0 +1,1 @@
+<svg:circle [attr.cx]="cx" [attr.cy]="cy" [attr.r]="r" [attr.fill]="fill"></svg:circle>

@@ -5,11 +5,12 @@ import { HomeComponent } from "@pages/home/home.component";
 import { ShopCartComponent } from "@pages/shop/components/shop-cart/shop-cart.component";
 import { ShopComponent } from "@pages/shop/shop.component";
 import { TestComponentComponent } from "@pages/test-component/test-component.component";
+import { VectorPaintComponent } from "@pages/vector-paint/vector-paint.component";
 
 export default [
   {
     path: '',
-    redirectTo: ROUTES_PATH.TEST,
+    redirectTo: ROUTES_PATH.VECTOR_PAINT,
     pathMatch: 'full'
   },
   {
@@ -27,6 +28,10 @@ export default [
       {
         path: ROUTES_PATH.CART,
         component: ShopCartComponent,
+      },
+      {
+        path: ROUTES_PATH.VECTOR_PAINT,
+        component: VectorPaintComponent,
       }
     ]
   }

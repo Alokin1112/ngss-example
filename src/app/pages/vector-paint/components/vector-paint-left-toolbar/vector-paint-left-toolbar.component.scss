@@ -1,0 +1,39 @@
+$bgc-color: #353535;
+
+:host {
+  display: block;
+  height: 100%;
+  display: flex;
+  width: 50px;
+  flex-flow: column nowrap;
+  background-color: $bgc-color;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+}
+
+.tool__button {
+  padding: 0;
+  margin: 0;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $bgc-color;
+
+  &:hover {
+    background-color: lighten($color: $bgc-color, $amount: 10);
+  }
+
+  &__icon {
+    color: white;
+    margin: 0 !important;
+  }
+}
+
+.focus {
+  border: 1px solid #fff;
+}
