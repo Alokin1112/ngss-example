@@ -1,9 +1,10 @@
 import { inject, Injectable, Injector, Signal } from "@angular/core";
 import { ActionInterface } from "projects/ngss/src/lib/actions/actions.interface";
-import { ActionHandlerWithOptions } from "projects/ngss/src/lib/decorators/action-handler.decorator";
 import { Middleware, MiddlewareContext } from "projects/ngss/src/lib/middleware/middleware.interface";
 import { getAllReducerActionHandlers } from "projects/ngss/src/lib/reducers/reducers-action-handlers-getter.const";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
+import { RevertChangesOptions } from "projects/ngss/src/lib/revert-changes/revert-changes-options.interface";
+import { RevertChangesStatus } from "projects/ngss/src/lib/revert-changes/revert-changes-status.interface";
 import { StoreAdditionalConfig } from "projects/ngss/src/lib/store/store-additional-config.interface";
 import { Observable } from "rxjs";
 
@@ -30,6 +31,16 @@ export abstract class Store {
     this.middlewares?.length ?
       this.handleMiddlewares(action) :
       this.actionDispatcher(action);
+  }
+
+  revert(clazz: new (...args: unknown[]) => ReducerInterface<unknown>, options: RevertChangesOptions): RevertChangesStatus[] {
+    let statuses: RevertChangesStatus[] = [];
+    this.reducers.forEach(reducer => {
+      if (reducer instanceof clazz) {
+        statuses = [...statuses, reducer.revert(options)];
+      }
+    });
+    return statuses;
   }
 
   reset(storeName: string | string[] = null): void {

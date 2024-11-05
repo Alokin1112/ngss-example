@@ -5,24 +5,35 @@ import { Observable, interval, map, of } from "rxjs";
 
 export interface TestState {
   value: number;
+  age: number;
+  city: string
+  male: boolean;
+  friends: { name: string; age: number; city: string }[];
 }
 
 const initialState: TestState = {
   value: 0,
+  age: 30,
+  city: "New York",
+  male: true,
+  friends: [
+    { name: "Jane Doe", age: 28, city: "Los Angeles" },
+    { name: "Alice", age: 25, city: "Chicago" }
+  ]
 };
 
 @Injectable({ providedIn: 'root' })
 export class TestReducer extends StoreReducer<TestState> {
   readonly name = "test";
   constructor() {
-    super(initialState);
+    super(initialState, { revert: { savePreviousStateType: 'ONLY_CHANGED_STRING', maxPreviousStates: 5, savePreviousStateSaveType: "COMPRESSED_WEB_ASSEMBLY" } });
   }
 
   @ActionHandler(AddNumber)
   addNumber(context: ActionHandlerContext<TestState>, payload: number): void {
     console.timeEnd("fromInitToFind");
     context.patchState({
-      value: context.getState().value + payload
+      value: context.getState().value + payload,
     });
 
     console.timeEnd("fromInitToFinish");

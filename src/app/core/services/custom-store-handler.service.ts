@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AddNumber, IntervalAdding, RemoveNumber } from '@app/store/testing.store.actions';
 import { StoreHandler } from '@core/interfaces/store-handler.interface';
-import { Store } from 'ngss';
+import { ReducerInterface, RevertChangesOptions, Store } from 'ngss';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -30,6 +30,9 @@ export class CustomStoreHandlerService implements StoreHandler {
     this.store.reset();
   }
 
+  revert(clazz: unknown, options: RevertChangesOptions): void {
+    this.store.revert(clazz as new (...args: unknown[]) => ReducerInterface<unknown>, options);
+  }
 
 
 }

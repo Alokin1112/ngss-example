@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Signal } from '@angular/core';
-import { Observable, take } from 'rxjs';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { AddNumber } from '@app/store/testing.store.actions';
+import { TestReducer } from '@app/store/testing.store.reducer';
 import { StoreActionType, StoreHandler } from '@core/interfaces/store-handler.interface';
 import { StoreHandlerFactoryService } from '@core/services/store-handler-factory.service';
 import { Store } from 'ngss';
+import { Observable, take } from 'rxjs';
 
 @Component({
   selector: 'ds-test-component',
@@ -61,5 +63,9 @@ export class TestComponentComponent {
 
   reset(): void {
     this.store.clear();
+  }
+
+  revert(): void {
+    this.store.revert(TestReducer, { byNumOfActions: 1 });
   }
 }

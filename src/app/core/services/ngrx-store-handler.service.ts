@@ -3,6 +3,7 @@ import { NgrxAddNumber, NgrxIntervalAdding, NgrxRemoveNumber } from '@app/store/
 import { testReducerValue } from '@app/store/ngrx/ngxs-testing.store.reducer';
 import { StoreHandler } from '@core/interfaces/store-handler.interface';
 import { Store } from '@ngrx/store';
+import { RevertChangesOptions } from 'ngss';
 import { Observable, take } from 'rxjs';
 
 @Injectable({
@@ -36,6 +37,11 @@ export class NgrxStoreHandlerService implements StoreHandler {
   getValue(): Observable<number> {
     console.log(this.store)
     return this.store.select(testReducerValue);
+  }
+
+  revert(clazz: unknown, options: RevertChangesOptions): void {
+    alert('Not implemented');
+    return;
   }
 
 }
