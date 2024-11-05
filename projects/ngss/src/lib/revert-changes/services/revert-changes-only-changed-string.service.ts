@@ -1,6 +1,9 @@
-import { ActionInterface, RevertChangesOptions, RevertChangesStatus } from 'ngss';
+
+import { ActionInterface } from 'projects/ngss/src/lib/actions/actions.interface';
 import { ReducerRevertOptions } from 'projects/ngss/src/lib/reducers/reducers-options.interface';
+import { RevertChangesOptions } from 'projects/ngss/src/lib/revert-changes/revert-changes-options.interface';
 import { RevertChangesSavedState, RevertChangesSavedStateService, RevertChangesService, StateChangeCallback } from 'projects/ngss/src/lib/revert-changes/revert-changes-service.interface';
+import { RevertChangesStatus } from 'projects/ngss/src/lib/revert-changes/revert-changes-status.interface';
 import { RevertChangesStringStateOperations } from 'projects/ngss/src/lib/revert-changes/revert-changes-string-state-operations.interface';
 import { stringStateChangesReverter } from 'projects/ngss/src/lib/revert-changes/string-state-changes-reverter.const';
 import { WebAssemblyService } from 'projects/ngss/src/lib/web-assembly/web-assembly.service';
