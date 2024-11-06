@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { AnyShape, CircleProperties } from '@pages/vector-paint/interfaces/vector-shapes.interface';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -13,8 +14,12 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CircleComponent {
-  @Input() cx!: number;
-  @Input() cy!: number;
-  @Input() r!: number;
-  @Input() fill!: string;
+  @Input({ required: true }) set dsShape(value: AnyShape) {
+    if (value?.type !== "CIRCLE") {
+      throw new Error('[RectangleComponent] Shape is not a rectangle');
+    }
+    this.properties = value.properties as CircleProperties;
+  }
+
+  properties: CircleProperties;
 }

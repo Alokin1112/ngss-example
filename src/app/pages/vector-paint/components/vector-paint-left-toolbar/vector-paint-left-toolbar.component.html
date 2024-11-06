@@ -1,12 +1,23 @@
-@for(tool of toolsList; track tool?.value) {
-  <button
-    mat-button
-    class="tool__button"
-    [class.focus]="dsActiveTool() === tool?.value"
-    [matTooltip]="tool?.label"
-    [matTooltipPosition]="'right'"
-    (click)="changeTool(tool)"
-  >
-    <mat-icon class="tool__button__icon">{{tool.icon}}</mat-icon>
-  </button>
-}
+<div class="top__buttons">
+  @for(tool of toolsList; track tool?.value) {
+    <button
+      mat-button
+      class="tool__button"
+      [class.focus]="dsActiveTool() === tool?.value"
+      [matTooltip]="tool?.label"
+      [matTooltipPosition]="'right'"
+      (click)="changeTool(tool)"
+    >
+      <mat-icon class="tool__button__icon">{{tool.icon}}</mat-icon>
+    </button>
+  }
+</div>
+
+<div class="bottom__buttons">
+  <input
+    type="color"
+    class="color__input"
+    [ngModel]="dsActiveColor()"
+    (ngModelChange)="dsActiveColor.set($event)"
+  />
+</div>

@@ -1,5 +1,11 @@
 <ds-vector-paint-top-toolbar />
 <div class="body">
-  <ds-vector-paint-left-toolbar [(dsActiveTool)]="activeTool" />
-  <ds-vector-paint-canvas />
+  <ds-vector-paint-left-toolbar
+    [(dsActiveTool)]="activeTool"
+    [(dsActiveColor)]="activeColor"
+  />
+  <ds-vector-paint-canvas [dsCanvasData]="{
+    activeTool,
+    activeColor,
+  }" />
 </div>

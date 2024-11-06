@@ -18,4 +18,6 @@ import { ToolItemType } from '@pages/vector-paint/interfaces/vector-paint-tool-o
 export class VectorPaintComponent {
 
   activeTool: ToolItemType = "CURSOR";
+
+  activeColor = '#78fa3c';
 }
