@@ -1,0 +1,7 @@
+<svg:ellipse  
+  [attr.cx]="properties.cx" 
+  [attr.cy]="properties.cy" 
+  [attr.rx]="properties.rx" 
+  [attr.ry]="properties.ry" 
+  [attr.fill]="properties.fill">
+</svg:ellipse>

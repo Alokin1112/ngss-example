@@ -3,14 +3,16 @@ import { VectorCanvasDataWithDrawData } from '@pages/vector-paint/interfaces/vec
 import { VectorShapeGenerator } from '@pages/vector-paint/interfaces/vector-shape-generator.interface';
 import { AnyShape, VectorShapeType } from '@pages/vector-paint/interfaces/vector-shapes.interface';
 import { VectorRectangleShapeGeneratorService } from '@pages/vector-paint/services/shape-generators/vector-rectangle-shape-generator.service';
-import { VectorCircleShapeGeneratorServiceService } from '@pages/vector-paint/services/shape-generators/vector-circle-shape-generator.service.service';
+import { VectorLineShapeGeneratorService } from '@pages/vector-paint/services/shape-generators/vector-line-shape-generator.service';
+import { VectorEllipseShapeGeneratorServiceService } from '@pages/vector-paint/services/shape-generators/vector-ellipse-shape-generator.service.service';
 
 @Injectable()
 export class VectorShapesGeneratorService {
 
   constructor(
     private vectorRectangleShapeGeneratorService: VectorRectangleShapeGeneratorService,
-    private vectorCircleShapeGeneratorServiceService: VectorCircleShapeGeneratorServiceService,
+    private vectorEllipseShapeGeneratorServiceService: VectorEllipseShapeGeneratorServiceService,
+    private vectorLineShapeGeneratorService: VectorLineShapeGeneratorService,
   ) { }
 
   generate(data: VectorCanvasDataWithDrawData): AnyShape {
@@ -25,8 +27,10 @@ export class VectorShapesGeneratorService {
     switch (type) {
       case "RECTANGLE":
         return this.vectorRectangleShapeGeneratorService as unknown as VectorShapeGenerator<T>;
-      case "CIRCLE":
-        return this.vectorCircleShapeGeneratorServiceService as unknown as VectorShapeGenerator<T>;
+      case "ELLIPSE":
+        return this.vectorEllipseShapeGeneratorServiceService as unknown as VectorShapeGenerator<T>;
+      case "LINE":
+        return this.vectorLineShapeGeneratorService as unknown as VectorShapeGenerator<T>;
       default:
         throw new Error(`Unknown shape type: ${type}`);
     }

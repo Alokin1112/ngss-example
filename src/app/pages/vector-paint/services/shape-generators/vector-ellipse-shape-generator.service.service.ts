@@ -4,21 +4,23 @@ import { VectorShapeGenerator } from '@pages/vector-paint/interfaces/vector-shap
 import { VectorShape } from '@pages/vector-paint/interfaces/vector-shapes.interface';
 
 @Injectable()
-export class VectorCircleShapeGeneratorServiceService implements VectorShapeGenerator<"CIRCLE"> {
-  generate(data: VectorCanvasDataWithDrawData): VectorShape<'CIRCLE'> {
+export class VectorEllipseShapeGeneratorServiceService implements VectorShapeGenerator<"ELLIPSE"> {
+  generate(data: VectorCanvasDataWithDrawData): VectorShape<'ELLIPSE'> {
     const { start, end, activeColor } = data;
 
-    const deltaX = end.x - start.x;
-    const deltaY = end.y - start.y;
+    const rx = Math.floor(Math.abs(end.x - start.x) / 2);
+    const ry = Math.floor(Math.abs(end.y - start.y) / 2);
 
-    const radius = Math.sqrt(deltaX ** 2 + deltaY ** 2);
+    const cx = Math.floor((start.x + end.x) / 2);
+    const cy = Math.floor((start.y + end.y) / 2);
 
     return {
-      type: 'CIRCLE',
+      type: 'ELLIPSE',
       properties: {
-        cx: start.x,
-        cy: start.y,
-        r: radius,
+        cx,
+        cy,
+        rx,
+        ry,
         fill: activeColor,
       }
     };

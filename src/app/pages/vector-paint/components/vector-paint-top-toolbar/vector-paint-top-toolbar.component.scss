@@ -1,8 +1,70 @@
-:host {
+$bgc-color: #353535;
+
+ds-vector-paint-top-toolbar {
+  --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.6);
+  --mdc-outlined-text-field-label-text-color: rgba(255, 255, 255, 0.6);
+  --mdc-outlined-text-field-label-text-color: rgba(255, 255, 255, 0.6);
+  --mdc-outlined-text-field-hover-outline-color: rgba(255, 255, 255, 0.932);
+  --mdc-outlined-text-field-hover-label-text-color: rgba(255, 255, 255, 0.932);
+  --mdc-outlined-text-field-input-text-color: rgba(255, 255, 255, 0.932);
+  --mdc-outlined-text-field-focus-label-text-color: rgba(118, 252, 125, 0.658);
+  --mdc-outlined-text-field-focus-outline-color: rgba(118, 252, 125, 0.658);
   display: block;
   width: 100%;
   display: flex;
-  min-height: 32px;
+  min-height: 74px;
   flex-flow: row nowrap;
-  background-color: #353535;
+  background-color: $bgc-color;
+  gap: 4px;
+  align-items: center;
+  padding: 8px;
+
+  .tool__button {
+    padding: 0;
+    margin: 0;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $bgc-color;
+
+    &:hover {
+      background-color: lighten($color: $bgc-color, $amount: 10);
+    }
+
+    &__icon {
+      color: white;
+      margin: 0 !important;
+    }
+  }
+
+  .reverse__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: row nowrap;
+    height: 100%;
+    gap: 4px;
+  }
+
+  .inputs {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .form__field {
+    max-width: 120px;
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
 }

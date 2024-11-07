@@ -1,1 +1,28 @@
-<p>vector-paint-top-toolbar works!</p>,
+<div class="reverse__actions">
+  <button
+    mat-button
+    class="tool__button"
+    matTooltip="Reverse step"
+    [matTooltipPosition]="'below'"
+  >
+    <mat-icon class="tool__button__icon">arrow_back</mat-icon>
+  </button>
+</div>
+
+<div class="inputs">
+  @if(inputs$ | async; as inputs) {
+    @for(input of inputs; track input?.label) {
+      <mat-form-field class="form__field">
+        <mat-label>{{ input.label }}</mat-label>
+        <input
+          matInput
+          [ngModel]="shape?.properties[input?.pathToProperty]"
+          [type]="input?.type"
+          [attr.min]="input?.type === 'number'? 1 : null"
+          [attr.max]="input?.type === 'number'? 10000 : null"
+          (ngModelChange)="updateField(input?.pathToProperty, $event)"
+        />
+      </mat-form-field>
+    }
+  }
+</div>

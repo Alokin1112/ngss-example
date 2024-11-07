@@ -1,11 +1,15 @@
-<ds-vector-paint-top-toolbar />
+<ds-vector-paint-top-toolbar [(shapeToUpdate)]="focusedShape" />
 <div class="body">
   <ds-vector-paint-left-toolbar
     [(dsActiveTool)]="activeTool"
     [(dsActiveColor)]="activeColor"
   />
-  <ds-vector-paint-canvas [dsCanvasData]="{
-    activeTool,
-    activeColor,
-  }" />
+  <ds-vector-paint-canvas
+    [dsUpdatedShape]="focusedShape()"
+    [dsCanvasData]="{
+      activeTool,
+      activeColor,
+    }"
+    (dsFocusedElement)="changeFocusedShape($event)"
+  />
 </div>

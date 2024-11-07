@@ -4,13 +4,13 @@ export interface VectorShape<T extends VectorShapeType> {
 }
 export type AnyShape = VectorShape<VectorShapeType>;
 
-export type VectorShapeType = 'RECTANGLE' | 'CIRCLE' | 'LINE' | 'TRIANGLE';
+export type VectorShapeType = 'RECTANGLE' | 'ELLIPSE' | 'LINE' | 'TRIANGLE';
 
 
-interface VectorShapePropertyMap extends Record<VectorShapeType, object> {
+export interface VectorShapePropertyMap extends Record<VectorShapeType, object> {
   RECTANGLE: RectangleProperties;
-  CIRCLE: CircleProperties;
-  LINE: { length: number; angle: number };
+  ELLIPSE: EllipseProperties;
+  LINE: LineProperties;
   TRIANGLE: { base: number; height: number };
 }
 
@@ -20,11 +20,24 @@ export interface RectangleProperties {
   width: number,
   height: number,
   fill: string,
+  rotate?: number,
 }
 
-export interface CircleProperties {
+export interface EllipseProperties {
   cx: number,
   cy: number,
-  r: number,
+  rx: number,
+  ry: number,
   fill: string,
+  rotate?: number,
+}
+
+export interface LineProperties {
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  fill: string,
+  width: number,
+  rotate?: number,
 }

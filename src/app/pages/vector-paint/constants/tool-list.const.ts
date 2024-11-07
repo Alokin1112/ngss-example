@@ -18,8 +18,8 @@ export const TOOL_LIST: ToolItem[] = [
   },
   {
     icon: 'circle',
-    label: 'Circle',
-    value: 'CIRCLE',
+    label: 'Ellipse',
+    value: 'ELLIPSE',
   },
   {
     icon: 'play_arrow',

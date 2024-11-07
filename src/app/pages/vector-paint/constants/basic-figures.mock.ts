@@ -12,11 +12,12 @@ export const BASIC_FIGURES: AnyShape[] = [
     }
   },
   {
-    type: 'CIRCLE',
+    type: 'ELLIPSE',
     properties: {
       cx: 200,
       cy: 200,
-      r: 50,
+      rx: 50,
+      ry: 50,
       fill: 'rgb(0, 255, 0)'
     }
   },
@@ -31,11 +32,12 @@ export const BASIC_FIGURES: AnyShape[] = [
     }
   },
   {
-    type: 'CIRCLE',
+    type: 'ELLIPSE',
     properties: {
       cx: 400,
       cy: 400,
-      r: 50,
+      rx: 50,
+      ry: 50,
       fill: 'rgb(255, 0, 255)'
     }
   }

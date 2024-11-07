@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, effect, ElementRef, Injector, input, OnInit, Renderer2 } from '@angular/core';
+import { Directive, effect, ElementRef, Injector, input, OnInit, Renderer2 } from '@angular/core';
 
 @Directive({
   selector: '[dsFocusable]',

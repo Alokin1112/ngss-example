@@ -1,2 +1,8 @@
 
-<svg:rect [attr.x]="properties.x" [attr.y]="properties.y" [attr.width]="properties.width" [attr.height]="properties.height" [attr.fill]="properties.fill"></svg:rect>
+<svg:rect 
+  [attr.x]="properties.x" 
+  [attr.y]="properties.y" 
+  [attr.width]="properties.width" 
+  [attr.height]="properties.height" 
+  [attr.fill]="properties.fill">
+</svg:rect>

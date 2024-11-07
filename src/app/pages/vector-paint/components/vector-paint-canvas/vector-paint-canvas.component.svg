@@ -1,16 +1,19 @@
-<svg width="1000" height="500">
+<svg width="95%" height="90%">
   <svg:g>
-  <!-- <svg:rect [dsFocusable]="true" x="50" y="50" width="100" height="100" [attr.fill]="dsCanvasData().activeColor"/> -->
-
   @for(figure of allFigures();  let idx = $index; track idx){
+    <svg:g [dsFocusable]="focusedElement()?.idx === idx"(click)="handleItemClick(figure,idx)">
     @switch(figure?.type) {
       @case("RECTANGLE") {
         <g ds-rectangle [dsShape]="figure"></g>
       }
-      @case("CIRCLE") {
-        <g ds-circle [dsShape]="figure"></g>
+      @case("ELLIPSE") {
+        <g ds-ellipse [dsShape]="figure"></g>
+      }
+      @case("LINE") {
+        <g ds-line [dsShape]="figure"></g>
       }
     }
+    </svg:g>
   }
   </svg:g>
   <!-- <svg:g #toRender></svg:g> -->

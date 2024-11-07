@@ -1,6 +1,6 @@
 import { VectorShapeType } from "@pages/vector-paint/interfaces/vector-shapes.interface";
 
-export type ToolItemType = 'CURSOR' | 'RECTANGLE' | 'CIRCLE' | 'TRIANGLE' | 'LINE';
+export type ToolItemType = 'CURSOR' | 'RECTANGLE' | 'ELLIPSE' | 'TRIANGLE' | 'LINE';
 
 export interface ToolItem {
   icon: string,
@@ -12,7 +12,7 @@ export interface ToolItem {
 export const ToolItemToShape: Record<ToolItemType, VectorShapeType> = {
   CURSOR: null,
   RECTANGLE: 'RECTANGLE',
-  CIRCLE: 'CIRCLE',
+  ELLIPSE: 'ELLIPSE',
   TRIANGLE: 'TRIANGLE',
   LINE: 'LINE',
 }
