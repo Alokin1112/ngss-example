@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { AddNumber } from '@app/store/testing.store.actions';
+import { AddNumber, RemoveNumber } from '@app/store/testing.store.actions';
 import { TestReducer } from '@app/store/testing.store.reducer';
 import { StoreActionType, StoreHandler } from '@core/interfaces/store-handler.interface';
 import { StoreHandlerFactoryService } from '@core/services/store-handler-factory.service';

@@ -5,7 +5,9 @@ import { RevertChangesService } from 'projects/ngss/src/lib/revert-changes/rever
 import { RevertChangesAllStateService } from 'projects/ngss/src/lib/revert-changes/services/revert-changes-all-state.service';
 import { RevertChangesNaiveDetectionService } from 'projects/ngss/src/lib/revert-changes/services/revert-changes-naive-detection.service';
 import { RevertChangesNoneService } from 'projects/ngss/src/lib/revert-changes/services/revert-changes-none.service';
+import { RevertChangesOnlyChangedStringTopDownService } from 'projects/ngss/src/lib/revert-changes/services/revert-changes-only-changed-string-top-down.service';
 import { RevertChangesOnlyChangedStringService } from 'projects/ngss/src/lib/revert-changes/services/revert-changes-only-changed-string.service';
+import { RevertChangesOnlyChangedTopDownService } from 'projects/ngss/src/lib/revert-changes/services/revert-changes-only-changed-top-down.service';
 import { RevertChangesOnlyChangedService } from 'projects/ngss/src/lib/revert-changes/services/revert-changes-only-changed.service';
 import { WebAssemblyService } from 'projects/ngss/src/lib/web-assembly/web-assembly.service';
 
@@ -32,12 +34,16 @@ export class RevertChangesFactoryService {
         return this.NONE_REDUCER_SINGLETON;
       case 'ALL_STATE':
         return new RevertChangesAllStateService<T>(options, savePreviousStateService);
-      case 'ONLY_CHANGES_NAIVE':
+      case 'ONLY_CHANGED_NAIVE':
         return new RevertChangesNaiveDetectionService<T>(options, savePreviousStateService);
       case 'ONLY_CHANGED':
         return new RevertChangesOnlyChangedService<T>(options, savePreviousStateService);
+      case 'ONLY_CHANGED_TOP_DOWN':
+        return new RevertChangesOnlyChangedTopDownService<T>(options, savePreviousStateService);
       case 'ONLY_CHANGED_STRING':
         return new RevertChangesOnlyChangedStringService<T>(options, savePreviousStateService, this.wasmService);
+      case 'ONLY_CAHNGED_STRING_TOP_DOWN':
+        return new RevertChangesOnlyChangedStringTopDownService<T>(options, savePreviousStateService, this.wasmService);
       default:
         throw new Error(`Unsupported savePreviousStateType: ${options?.savePreviousStateType}`);
     }

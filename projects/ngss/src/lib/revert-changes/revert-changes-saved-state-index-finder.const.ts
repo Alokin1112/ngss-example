@@ -18,19 +18,20 @@ export const getSavedStateIndex = <T>(savedState: RevertChangesSavedState<T>[], 
     return getSavedStateByNumOfActions(savedState, options as RevertChangesOptionsByNumOfActions);
   }
 
-  return -1;
+  return -10;
 };
 
 const getSavedStateByDate = <T>(savedState: RevertChangesSavedState<T>[], options: RevertChangesOptionsByDate): number => {
   if (!savedState || savedState.length === 0 || !options?.byDate) {
-    return -1;
+    return -10;
   }
-  return savedState.findIndex((state) => state?.dateTime >= options?.byDate);
+  const foundIndex = savedState.findIndex((state) => state?.dateTime >= options?.byDate);
+  return foundIndex === -1 ? -10 : foundIndex;
 };
 
 const getSavedStateByActionType = <T>(savedState: RevertChangesSavedState<T>[], options: RevertChangesOptionsByActionType): number => {
   if (!savedState || savedState.length === 0 || !options?.byActionType) {
-    return -1;
+    return -10;
   }
   let actionsCounter = 0;
 
@@ -46,13 +47,13 @@ const getSavedStateByActionType = <T>(savedState: RevertChangesSavedState<T>[], 
     return false;
   });
 
-  return reversedIndex === -1 ? -1 : savedState.length - reversedIndex - 1;
+  return reversedIndex === -1 ? -10 : savedState.length - reversedIndex - 1;
 };
 
 const getSavedStateByNumOfActions = <T>(savedState: RevertChangesSavedState<T>[], options: RevertChangesOptionsByNumOfActions): number => {
 
   if (!savedState || savedState.length === 0 || !options?.byNumOfActions) {
-    return -1;
+    return -10;
   }
 
   if (savedState.length <= options?.byNumOfActions) {

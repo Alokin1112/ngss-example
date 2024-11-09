@@ -26,7 +26,7 @@ const initialState: TestState = {
 export class TestReducer extends StoreReducer<TestState> {
   readonly name = "test";
   constructor() {
-    super(initialState, { revert: { savePreviousStateType: 'ONLY_CHANGED_STRING', maxPreviousStates: 5, savePreviousStateSaveType: "COMPRESSED_WEB_ASSEMBLY" } });
+    super(initialState, { revert: { savePreviousStateType: 'ONLY_CHANGED_TOP_DOWN', maxPreviousStates: 5, savePreviousStateSaveType: "COMPRESSED_WEB_ASSEMBLY" } });
   }
 
   @ActionHandler(AddNumber)

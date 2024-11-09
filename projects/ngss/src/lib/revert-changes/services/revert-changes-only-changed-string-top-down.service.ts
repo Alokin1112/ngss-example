@@ -1,4 +1,3 @@
-
 import { ActionInterface } from 'projects/ngss/src/lib/actions/actions.interface';
 import { ReducerRevertOptions } from 'projects/ngss/src/lib/reducers/reducers-options.interface';
 import { RevertChangesOptions } from 'projects/ngss/src/lib/revert-changes/revert-changes-options.interface';
@@ -8,11 +7,11 @@ import { RevertChangesStringStateOperations } from 'projects/ngss/src/lib/revert
 import { stringStateChangesReverter } from 'projects/ngss/src/lib/revert-changes/string-state-changes-reverter.const';
 import { WebAssemblyService } from 'projects/ngss/src/lib/web-assembly/web-assembly.service';
 
-export class RevertChangesOnlyChangedStringService<T> implements RevertChangesService<T> {
+export class RevertChangesOnlyChangedStringTopDownService<T> implements RevertChangesService<T> {
 
   /**
    * 
-   * In stateService 0 index will be stored the upToDate state, in the rest of the indexes will be stored the previous states
+   * In stateService last index will be stored the upToDate state, in the rest of the indexes will be stored the previous states
   */
   constructor(
     private options: ReducerRevertOptions,
@@ -24,54 +23,50 @@ export class RevertChangesOnlyChangedStringService<T> implements RevertChangesSe
     this.stateService.clear();
     const stateToSave: RevertChangesSavedState<T> = { data: state, dateTime: new Date() };
     this.stateService.pushState(stateToSave); //first for upToDate state
-    this.stateService.pushState(stateToSave); //second for previous state
   }
 
   saveChanges<A>(newState: T, handledAction: ActionInterface<A>): void {
-    const previousUpToDateState = this.stateService.get(0, 1)[0]?.data as T;
+    const stateLength = this.stateService.getLength();
+    const previousUpToDateState = this.stateService.get(stateLength - 1, stateLength)[0];
+    const previousUpToDateStateData = previousUpToDateState?.data as T;
     if (!previousUpToDateState) {
       this.stateService.pushState({ data: newState, dateTime: new Date(), actionType: handledAction.getType() });
       return;
     }
-    const diff = this.wasmService.getChanges(previousUpToDateState, newState);
-    const diffState: RevertChangesSavedState<RevertChangesStringStateOperations[]> = { data: diff, dateTime: new Date(), actionType: handledAction.getType() };
-
-    this.stateService.pushState(diffState);
-    this.stateService.saveAt(0, { ...diffState, data: newState });
+    const diff = this.wasmService.getChanges(newState, previousUpToDateStateData);
+    const diffState: RevertChangesSavedState<RevertChangesStringStateOperations[]> = { ...previousUpToDateState, data: diff };
+    this.stateService.saveAt(stateLength - 1, diffState);
+    this.stateService.pushState({ dateTime: new Date(), actionType: handledAction.getType(), data: newState });
 
     this.shiftArrayIfNeeded();
   }
 
   revertChanges(options: RevertChangesOptions, stateChangeCallback: StateChangeCallback<T>): RevertChangesStatus {
     const indexToRevert = this.stateService.getSpecifiedSavedStateIndex(options);
-    if (indexToRevert < 1) { // 0 index is the upToDate state so we can't revert to it
+    if (indexToRevert < 0) {
       return { isSuccess: false, message: 'No saved state found' };
     }
 
-    const previousStates = this.stateService.get(1, indexToRevert + 1);
-    const initialStateData = JSON.parse(JSON.stringify(previousStates[0]?.data)) as T;
-    const statesWithChanges = previousStates.slice(1) || [];
+    const previousStates = this.stateService.get(indexToRevert, this.stateService.getLength());
+    const initialStateData = JSON.parse(JSON.stringify(previousStates[previousStates?.length - 1]?.data)) as T;
+    const statesWithChanges = [...(previousStates?.slice(0, previousStates?.length - 1) || [])]?.reverse();
     const stateDataToRevert = statesWithChanges?.reduce((acc, state) => (stringStateChangesReverter(acc, state?.data as RevertChangesStringStateOperations[])), initialStateData);
-    this.stateService.remove(indexToRevert + 1, this.stateService.getLength());
-    this.stateService.saveAt(0, {
-      ...previousStates[previousStates.length - 1],
+    this.stateService.remove(indexToRevert, this.stateService.getLength());
+    this.stateService.pushState({
+      ...previousStates[0],
       data: stateDataToRevert
     });
+
     stateChangeCallback(stateDataToRevert);
 
     return { isSuccess: true };
   }
 
   private shiftArrayIfNeeded() {
-    while (this.stateService.getLength() > this.options.maxPreviousStates + 2) {
-      const savedStates = this.stateService.get(1, 3);
-      const newInitialState = {
-        ...(savedStates[1] || {}),
-        data: stringStateChangesReverter(savedStates[0]?.data as T, savedStates[1]?.data as RevertChangesStringStateOperations[])
-      } as RevertChangesSavedState<T>;
-      this.stateService.remove(1, 2);
-      this.stateService.saveAt(1, newInitialState);
+    while (this.stateService.getLength() > this.options.maxPreviousStates + 1) {
+      this.stateService.remove(0, 1);
     }
   }
 
 }
+
