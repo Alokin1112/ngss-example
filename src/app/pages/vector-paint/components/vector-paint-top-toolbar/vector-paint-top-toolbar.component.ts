@@ -43,7 +43,7 @@ export class VectorPaintTopToolbarComponent<T extends VectorShapeType> implement
     return this.shapeToUpdate()?.shape as VectorShape<T>;
   }
 
-  updateField(pathToProperty: keyof VectorShapePropertyMap[T], value: unknown): void {
+  updateField(pathToProperty: keyof VectorShapePropertyMap[T], type: ShapeEditInputType, value: unknown): void {
     const shape = this.shapeToUpdate();
     if (!shape) {
       return;
@@ -54,7 +54,7 @@ export class VectorPaintTopToolbarComponent<T extends VectorShapeType> implement
         ...shape.shape,
         properties: {
           ...shape.shape.properties,
-          [pathToProperty]: value,
+          [pathToProperty]: type == 'number' ? Number(value) : value,
         },
       },
     };

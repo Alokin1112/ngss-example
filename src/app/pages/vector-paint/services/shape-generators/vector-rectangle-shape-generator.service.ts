@@ -21,6 +21,9 @@ export class VectorRectangleShapeGeneratorService implements VectorShapeGenerato
         width: Math.abs(deltaX),
         height: Math.abs(deltaY),
         fill: activeColor,
+        rotateDeg: 0,
+        rotateX: Math.floor((start.x + end.x) / 2),
+        rotateY: Math.floor((start.y + end.y) / 2),
       }
     };
   }

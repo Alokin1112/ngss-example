@@ -22,4 +22,8 @@ export class RectangleComponent {
   }
 
   properties: RectangleProperties;
+
+  get transform() {
+    return `rotate(${this.properties.rotateDeg || 0}, ${this.properties.rotateX || 0}, ${this.properties.rotateY || 0})`;
+  }
 }

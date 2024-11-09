@@ -3,5 +3,6 @@
   [attr.cy]="properties.cy" 
   [attr.rx]="properties.rx" 
   [attr.ry]="properties.ry" 
-  [attr.fill]="properties.fill">
+  [attr.fill]="properties.fill"
+  [attr.transform]="transform">
 </svg:ellipse>

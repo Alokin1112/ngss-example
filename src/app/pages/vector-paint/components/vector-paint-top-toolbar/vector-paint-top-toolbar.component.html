@@ -18,9 +18,9 @@
           matInput
           [ngModel]="shape?.properties[input?.pathToProperty]"
           [type]="input?.type"
-          [attr.min]="input?.type === 'number'? 1 : null"
+          [attr.min]="input?.type === 'number'? 0 : null"
           [attr.max]="input?.type === 'number'? 10000 : null"
-          (ngModelChange)="updateField(input?.pathToProperty, $event)"
+          (ngModelChange)="updateField(input?.pathToProperty,input?.type, $event)"
         />
       </mat-form-field>
     }

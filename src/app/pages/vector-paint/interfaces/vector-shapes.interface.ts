@@ -11,7 +11,7 @@ export interface VectorShapePropertyMap extends Record<VectorShapeType, object> 
   RECTANGLE: RectangleProperties;
   ELLIPSE: EllipseProperties;
   LINE: LineProperties;
-  TRIANGLE: { base: number; height: number };
+  TRIANGLE: TriangleProperties;
 }
 
 export interface RectangleProperties {
@@ -20,7 +20,9 @@ export interface RectangleProperties {
   width: number,
   height: number,
   fill: string,
-  rotate?: number,
+  rotateDeg: number,
+  rotateX: number,
+  rotateY: number,
 }
 
 export interface EllipseProperties {
@@ -29,7 +31,9 @@ export interface EllipseProperties {
   rx: number,
   ry: number,
   fill: string,
-  rotate?: number,
+  rotateDeg: number,
+  rotateX: number,
+  rotateY: number,
 }
 
 export interface LineProperties {
@@ -39,5 +43,18 @@ export interface LineProperties {
   y2: number,
   fill: string,
   width: number,
-  rotate?: number,
+  rotateDeg?: number,
+  rotateX?: number,
+  rotateY?: number,
+}
+
+export interface TriangleProperties {
+  baseStartX: number,
+  baseStartY: number,
+  baseWidth: number,
+  height: number,
+  fill: string,
+  rotateDeg?: number,
+  rotateX?: number,
+  rotateY?: number,
 }

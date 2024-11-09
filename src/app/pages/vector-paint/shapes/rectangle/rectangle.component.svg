@@ -4,5 +4,6 @@
   [attr.y]="properties.y" 
   [attr.width]="properties.width" 
   [attr.height]="properties.height" 
-  [attr.fill]="properties.fill">
+  [attr.fill]="properties.fill"
+  [attr.transform]="transform">
 </svg:rect>

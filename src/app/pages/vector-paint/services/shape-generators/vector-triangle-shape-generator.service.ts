@@ -4,23 +4,25 @@ import { VectorShapeGenerator } from '@pages/vector-paint/interfaces/vector-shap
 import { VectorShape } from '@pages/vector-paint/interfaces/vector-shapes.interface';
 
 @Injectable()
-export class VectorLineShapeGeneratorService implements VectorShapeGenerator<"LINE"> {
+export class VectorTriangleShapeGeneratorService implements VectorShapeGenerator<"TRIANGLE"> {
 
-  generate(data: VectorCanvasDataWithDrawData): VectorShape<'LINE'> {
+  generate(data: VectorCanvasDataWithDrawData): VectorShape<'TRIANGLE'> {
+
+    const baseWidth = data.end.x - data.start.x;
+
     return {
-      type: 'LINE',
+      type: 'TRIANGLE',
       properties: {
-        x1: data.start.x,
-        y1: data.start.y,
-        x2: data.end.x,
-        y2: data.end.y,
-        fill: data.activeColor,
-        width: 2,
+        baseStartX: baseWidth > 0 ? data.start.x : data.end.x,
+        baseStartY: data.end.y,
+        baseWidth: Math.abs(baseWidth),
+        height: data.end.y - data.start.y,
+        fill: data?.activeColor,
         rotateDeg: 0,
         rotateX: Math.floor((data.start.x + data.end.x) / 2),
         rotateY: Math.floor((data.start.y + data.end.y) / 2),
       }
-    };
+    }
   }
 
 }

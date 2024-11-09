@@ -7,6 +7,7 @@ import { TestComponentComponent } from "@pages/test-component/test-component.com
 import { VectorEllipseShapeGeneratorServiceService } from '@pages/vector-paint/services/shape-generators/vector-ellipse-shape-generator.service.service';
 import { VectorLineShapeGeneratorService } from '@pages/vector-paint/services/shape-generators/vector-line-shape-generator.service';
 import { VectorRectangleShapeGeneratorService } from "@pages/vector-paint/services/shape-generators/vector-rectangle-shape-generator.service";
+import { VectorTriangleShapeGeneratorService } from "@pages/vector-paint/services/shape-generators/vector-triangle-shape-generator.service";
 import { VectorShapesGeneratorService } from "@pages/vector-paint/services/vector-shapes-generator.service";
 import { VectorPaintComponent } from "@pages/vector-paint/vector-paint.component";
 
@@ -39,7 +40,8 @@ export default [
           VectorShapesGeneratorService,
           VectorRectangleShapeGeneratorService,
           VectorEllipseShapeGeneratorServiceService,
-          VectorLineShapeGeneratorService
+          VectorLineShapeGeneratorService,
+          VectorTriangleShapeGeneratorService
         ]
       }
     ]

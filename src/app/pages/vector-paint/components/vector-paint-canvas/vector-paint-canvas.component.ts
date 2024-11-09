@@ -9,8 +9,9 @@ import { VectorShapesGeneratorService } from "@pages/vector-paint/services/vecto
 import { EllipseComponent } from '@pages/vector-paint/shapes/ellipse/ellipse.component';
 import { LineComponent } from '@pages/vector-paint/shapes/line/line.component';
 import { RectangleComponent } from '@pages/vector-paint/shapes/rectangle/rectangle.component';
+import { TriangleComponent } from '@pages/vector-paint/shapes/triangle/triangle.component';
 import { isEqual } from 'lodash';
-import { pairwise, tap, switchMap, of, filter, Subject, takeUntil, debounceTime, distinctUntilChanged, map, merge, Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, merge, Observable, pairwise, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'ds-vector-paint-canvas',
@@ -20,7 +21,8 @@ import { pairwise, tap, switchMap, of, filter, Subject, takeUntil, debounceTime,
     RectangleComponent,
     EllipseComponent,
     FocusableDirective,
-    LineComponent
+    LineComponent,
+    TriangleComponent
   ],
   templateUrl: './vector-paint-canvas.component.svg',
   styleUrl: './vector-paint-canvas.component.scss',

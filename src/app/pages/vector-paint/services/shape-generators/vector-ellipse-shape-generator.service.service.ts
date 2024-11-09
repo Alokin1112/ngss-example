@@ -22,6 +22,9 @@ export class VectorEllipseShapeGeneratorServiceService implements VectorShapeGen
         rx,
         ry,
         fill: activeColor,
+        rotateDeg: 0,
+        rotateX: cx,
+        rotateY: cy,
       }
     };
   }

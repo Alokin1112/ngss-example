@@ -12,6 +12,9 @@
       @case("LINE") {
         <g ds-line [dsShape]="figure"></g>
       }
+      @case("TRIANGLE") {
+        <g ds-triangle [dsShape]="figure"></g>
+      }
     }
     </svg:g>
   }
