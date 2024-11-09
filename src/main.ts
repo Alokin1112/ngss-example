@@ -14,6 +14,7 @@ import { NgxsModule } from '@ngxs/store';
 import { ShopReducer } from '@pages/shop/store/shop.store.reducer';
 import { NGSSStoreModule } from 'ngss';
 import { AppComponent } from './app/app.component';
+import { VectorPaintReducer } from '@pages/vector-paint/store/vector-paint.reducer';
 
 bootstrapApplication(AppComponent, {
     providers: [
@@ -30,6 +31,7 @@ bootstrapApplication(AppComponent, {
             NGSSStoreModule.forRoot([
                 ShopReducer,
                 TestReducerNgss,
+                VectorPaintReducer,
                 MultipleReducer1,
             ], {
                 middlewares: [

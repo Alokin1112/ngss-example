@@ -10,7 +10,9 @@ import { EllipseComponent } from '@pages/vector-paint/shapes/ellipse/ellipse.com
 import { LineComponent } from '@pages/vector-paint/shapes/line/line.component';
 import { RectangleComponent } from '@pages/vector-paint/shapes/rectangle/rectangle.component';
 import { TriangleComponent } from '@pages/vector-paint/shapes/triangle/triangle.component';
+import { AddShape, UpdateShape } from '@pages/vector-paint/store/vector-paint.actions';
 import { isEqual } from 'lodash';
+import { Store } from 'ngss';
 import { debounceTime, distinctUntilChanged, filter, map, merge, Observable, pairwise, Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -39,7 +41,7 @@ export class VectorPaintCanvasComponent implements OnInit, OnDestroy {
   startPosition: VectorCanvasPosition;
   focusedElement: WritableSignal<FocusedShape> = signal(null);
   allFigures: Signal<AnyShape[]>;
-  alreadyDrawnFigures: WritableSignal<AnyShape[]> = signal([] as AnyShape[]);
+  alreadyDrawnFigures: Signal<AnyShape[]>;
   newFigure: WritableSignal<AnyShape | null> = signal(null);
 
   private isDragging = false;
@@ -72,22 +74,23 @@ export class VectorPaintCanvasComponent implements OnInit, OnDestroy {
     const y = Math.floor(e.clientY - rect.top);
     const figure = this.getDrawFigure({ x, y });
     if (figure) {
-      this.alreadyDrawnFigures.set([...this.alreadyDrawnFigures(), figure]);
+      // this.alreadyDrawnFigures.set([...this.alreadyDrawnFigures(), figure]);
+      this.store.dispatch(new AddShape(figure));
     }
     this.newFigure.set(null);
     this.startPosition = null;
   }
 
 
-  fillColor = 'rgb(255, 0, 0)';
-
   constructor(
     private elementRef: ElementRef,
     private shapeGenerator: VectorShapesGeneratorService,
     private injector: Injector,
+    private store: Store,
   ) { }
 
   ngOnInit(): void {
+    this.alreadyDrawnFigures = this.store.selectSignal(state => state.vectorPaint.alreadyDrawnShapes);
     this.allFigures = computed(() => {
       const figures = [...(this.alreadyDrawnFigures() || [])];
       const newFigure = this.newFigure();
@@ -111,9 +114,10 @@ export class VectorPaintCanvasComponent implements OnInit, OnDestroy {
       takeUntil(this.onDestroy$),
     ).subscribe((shape) => {
       console.log('update shape', shape);
-      const alreadyDrawnFigures = [...(this.alreadyDrawnFigures() || [])];
-      alreadyDrawnFigures[shape.idx] = shape.shape;
-      this.alreadyDrawnFigures.set(alreadyDrawnFigures);
+      // const alreadyDrawnFigures = [...(this.alreadyDrawnFigures() || [])];
+      // alreadyDrawnFigures[shape.idx] = shape.shape;
+      // this.alreadyDrawnFigures.set(alreadyDrawnFigures);
+      this.store.dispatch(new UpdateShape({ index: shape?.idx, shape: shape?.shape }));
     });
   }
 
