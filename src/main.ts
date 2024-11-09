@@ -1,9 +1,11 @@
 import { importProvidersFrom, isDevMode } from '@angular/core';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { bootstrapApplication, BrowserModule } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import appRouting from '@app/app.routing';
+import { MultipleReducer1 } from '@app/store/multiple/copies/multiple-test.store.reducer_1';
 import { testReducer } from '@app/store/ngrx/ngxs-testing.store.reducer';
 import { TestReducer } from '@app/store/ngxs/ngxs-testing.store.reducer';
 import { TestReducer as TestReducerNgss } from '@app/store/testing.store.reducer';
@@ -12,7 +14,6 @@ import { NgxsModule } from '@ngxs/store';
 import { ShopReducer } from '@pages/shop/store/shop.store.reducer';
 import { NGSSStoreModule } from 'ngss';
 import { AppComponent } from './app/app.component';
-import { MultipleReducer1 } from '@app/store/multiple/copies/multiple-test.store.reducer_1';
 
 bootstrapApplication(AppComponent, {
     providers: [
@@ -38,6 +39,13 @@ bootstrapApplication(AppComponent, {
                 ],
                 useSignalStore: true,
             })),
+        {
+            provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+            useValue: {
+                appearance: 'outline',
+                hideRequiredMarker: true,
+            },
+        },
         provideAnimations(),
     ]
 })

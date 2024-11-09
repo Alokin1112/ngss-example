@@ -1,0 +1,5 @@
+<svg:polygon 
+  [attr.points]="points"   
+  [attr.fill]="properties.fill"
+  [attr.transform]="transform">
+</svg:polygon>

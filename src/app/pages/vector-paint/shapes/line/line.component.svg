@@ -1,0 +1,9 @@
+<svg:line 
+  [attr.x1]="properties.x1" 
+  [attr.y1]="properties.y1" 
+  [attr.x2]="properties.x2" 
+  [attr.y2]="properties.y2" 
+  [attr.stroke]="properties.fill" 
+  [attr.stroke-width]="properties.width"
+  [attr.transform]="transform">
+</svg:line>

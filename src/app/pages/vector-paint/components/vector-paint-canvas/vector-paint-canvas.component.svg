@@ -1,0 +1,23 @@
+<svg width="95%" height="90%">
+  <svg:g>
+  @for(figure of allFigures();  let idx = $index; track idx){
+    <svg:g [dsFocusable]="focusedElement()?.idx === idx"(click)="handleItemClick(figure,idx)">
+    @switch(figure?.type) {
+      @case("RECTANGLE") {
+        <g ds-rectangle [dsShape]="figure"></g>
+      }
+      @case("ELLIPSE") {
+        <g ds-ellipse [dsShape]="figure"></g>
+      }
+      @case("LINE") {
+        <g ds-line [dsShape]="figure"></g>
+      }
+      @case("TRIANGLE") {
+        <g ds-triangle [dsShape]="figure"></g>
+      }
+    }
+    </svg:g>
+  }
+  </svg:g>
+  <!-- <svg:g #toRender></svg:g> -->
+</svg>

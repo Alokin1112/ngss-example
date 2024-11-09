@@ -1,0 +1,13 @@
+:host {
+  display: block;
+  height: calc(100vh - 64px);
+  width: 100vw;
+  margin: -10px;
+}
+
+.body {
+  display: flex;
+  flex-flow: row nowrap;
+  height: calc(100vh - 138px);
+  width: 100%;
+}
