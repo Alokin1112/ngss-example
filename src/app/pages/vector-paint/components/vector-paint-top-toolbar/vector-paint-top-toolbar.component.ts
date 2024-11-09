@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Injector, model, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Injector, model, OnInit, ViewEncapsulation } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,7 +9,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FocusedShape, ShapeEditInput, ShapeEditInputType } from '@pages/vector-paint/interfaces/vector-canvas-data.interface';
 import { VectorShape, VectorShapePropertyMap, VectorShapeType } from '@pages/vector-paint/interfaces/vector-shapes.interface';
-import { distinctUntilChanged, map, Observable, of, pairwise, switchMap } from 'rxjs';
+import { VectorPaintReducer } from '@pages/vector-paint/store/vector-paint.reducer';
+import { Store } from 'ngss';
+import { distinctUntilChanged, map, Observable } from 'rxjs';
 
 @Component({
   selector: 'ds-vector-paint-top-toolbar',
@@ -30,6 +32,7 @@ export class VectorPaintTopToolbarComponent<T extends VectorShapeType> implement
 
   constructor(
     private injector: Injector,
+    private store: Store,
   ) { }
 
   ngOnInit(): void {
@@ -41,6 +44,11 @@ export class VectorPaintTopToolbarComponent<T extends VectorShapeType> implement
 
   get shape(): VectorShape<T> {
     return this.shapeToUpdate()?.shape as VectorShape<T>;
+  }
+
+  reverseStep(): void {
+    this.shapeToUpdate.set(null);
+    this.store.revert(VectorPaintReducer, { byNumOfActions: 1 });
   }
 
   updateField(pathToProperty: keyof VectorShapePropertyMap[T], type: ShapeEditInputType, value: unknown): void {
