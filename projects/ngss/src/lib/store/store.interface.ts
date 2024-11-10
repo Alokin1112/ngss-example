@@ -69,7 +69,7 @@ export abstract class Store {
   }
 
   protected actionDispatcher = (action: ActionInterface<unknown>): void => {
-    const actionReducers = this.actionReducers.get(action?.getType());
+    const actionReducers = this.actionReducers.get(action?.getType()) || [];
     actionReducers.forEach(reducer => {
       reducer?.handleAction(action);
     });

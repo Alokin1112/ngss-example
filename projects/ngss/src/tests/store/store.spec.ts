@@ -1,4 +1,6 @@
-import { signal, WritableSignal } from '@angular/core';
+import { ActionHandlerContext } from './../../../../../dist/ngss/lib/decorators/action-handler.decorator.d';
+import { ActionHandler } from './../../lib/decorators/action-handler.decorator';
+import { Signal, signal, WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Dispatch, Middleware, MiddlewareContext } from 'projects/ngss/src/lib/middleware/middleware.interface';
 import { ActionClass } from 'projects/ngss/src/lib/actions/action.class.implementation';
@@ -7,13 +9,15 @@ import { StoreAdditionalConfig } from "projects/ngss/src/lib/store/store-additio
 import { StoreSignal } from 'projects/ngss/src/lib/store/store-signal.class.implementation';
 import { StoreClass } from "projects/ngss/src/lib/store/store.class.implementation";
 import { Store } from 'projects/ngss/src/lib/store/store.interface';
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Observable, take } from "rxjs";
 import { ActionInterface } from 'projects/ngss/src/lib/actions/actions.interface';
+import { RevertChangesOptions, RevertChangesStatus } from 'ngss';
+import { mock } from 'node:test';
 
 const EACH_STORE_IMPLEMENTATION = [
   'ClassStore',
   'SignalStore',
-]
+];
 
 interface ReducerValueInterface {
   count: number;
@@ -44,20 +48,43 @@ const getMockedReducer = (name: string) => {
   const mockGetSnapshot = jest.fn(() => stateSignal());
   const mockHandleAction = jest.fn();
   const mockReset = jest.fn();
-  const mockReducer: ReducerInterface<ReducerValueInterface> = {
-    name: name,
-    initialValue: {
+  const mockRevert = jest.fn(() => ({ isSuccess: true } as RevertChangesStatus));
+
+  class TestMockReducer implements ReducerInterface<ReducerValueInterface> {
+    name = name;
+    initialValue = {
       count: 0,
-    },
-    getState: mockGetState,
-    getStateSignal: mockGetSignal,
-    getSnapshot: mockGetSnapshot,
-    handleAction: mockHandleAction,
-    reset: mockReset,
-  };
+    };
+
+    @ActionHandler(TestAction)
+    testAction(context: ActionHandlerContext<ReducerValueInterface>): void {
+      return;
+    }
+
+    getState() {
+      return mockGetState();
+    }
+    getStateSignal() {
+      return mockGetSignal();
+    }
+    getSnapshot() {
+      return mockGetSnapshot();
+    }
+    handleAction(action: ActionInterface<unknown>) {
+      mockHandleAction(action);
+    }
+    reset() {
+      mockReset();
+    }
+    revert(options: RevertChangesOptions) {
+      return mockRevert();
+    }
+
+  }
+
 
   return {
-    mockReducer,
+    mockReducer: new TestMockReducer(),
     mockGetState,
     mockGetSignal,
     mockGetSnapshot,
@@ -146,7 +173,7 @@ describe("Select functionallity", () => {
     });
     const receivedValue$ = store.select((state) => state);
     const expectedValue = reducers.reduce((acc, reducer) => ({ ...acc, [reducer.name]: { count: 0 } }), {});
-    receivedValue$.subscribe((receivedValue) => {
+    receivedValue$.pipe(take(1)).subscribe((receivedValue) => {
       expect(receivedValue).toEqual(expectedValue);
       done();
     });
@@ -168,7 +195,7 @@ describe("Select functionallity", () => {
     });
     const receivedValue$ = store.select((state) => state);
     const expectedValue = reducers.reduce((acc, reducer) => ({ ...acc, [reducer.name]: { count: 1 } }), {});
-    receivedValue$.subscribe((receivedValue) => {
+    receivedValue$.pipe(take(1)).subscribe((receivedValue) => {
       expect(receivedValue).toEqual(expectedValue);
       done();
     });
@@ -190,7 +217,7 @@ describe("Select functionallity", () => {
     });
     const receivedValue$ = store.select((state) => state.reducer0.count);
     const expectedValue = 1;
-    receivedValue$.subscribe((receivedValue) => {
+    receivedValue$.pipe(take(1)).subscribe((receivedValue) => {
       expect(receivedValue).toEqual(expectedValue);
       done();
     });
