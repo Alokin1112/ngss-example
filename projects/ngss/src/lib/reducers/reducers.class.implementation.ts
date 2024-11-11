@@ -9,7 +9,7 @@ import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interf
 import { RevertChangesOptions } from "projects/ngss/src/lib/revert-changes/revert-changes-options.interface";
 import { RevertChangesService } from "projects/ngss/src/lib/revert-changes/revert-changes-service.interface";
 import { RevertChangesStatus } from "projects/ngss/src/lib/revert-changes/revert-changes-status.interface";
-import { RevertChangesFactoryService } from "projects/ngss/src/public-api";
+import { RevertChangesFactoryService } from "projects/ngss/src/lib/revert-changes/services/revert-changes-factory.service";
 import { BehaviorSubject, isObservable, Observable } from "rxjs";
 
 export abstract class StoreReducer<T> implements ReducerInterface<T> {
@@ -54,6 +54,7 @@ export abstract class StoreReducer<T> implements ReducerInterface<T> {
   reset(): void {
     this.reducersSubscriptionHandlerService.completeAllSubscriptions();
     this.state$.next(this.initialValue);
+    this.revertChangesService.saveInitialState(this.initialValue);
   }
 
   handleAction<A>(action: ActionInterface<A>): void {

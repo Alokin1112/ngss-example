@@ -53,6 +53,7 @@ export abstract class StoreSignalReducer<T> implements ReducerInterface<T> {
   reset(): void {
     this.reducersSubscriptionHandlerService.completeAllSubscriptions();
     this.state$.set(this.initialValue);
+    this.revertChangesService.saveInitialState(this.initialValue);
   }
 
   handleAction<A>(action: ActionInterface<A>): void {

@@ -3,6 +3,7 @@ import type { Config } from 'jest';
 const config: Config = {
   preset: 'jest-preset-angular',
   setupFilesAfterEnv: ['<rootDir>/src/setup.jest.ts'],
+  setupFiles: ['<rootDir>/jest.setup.ts'],
   randomize: true,
   testPathIgnorePatterns: [
     "<rootDir>/node_modules/",

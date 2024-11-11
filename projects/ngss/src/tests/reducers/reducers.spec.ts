@@ -1,10 +1,15 @@
 import { TestBed } from "@angular/core/testing";
+import { ReducerOptions } from "projects/ngss/src/lib/reducers/reducers-options.interface";
 import { ReducersSubscriptionHandlerService } from "projects/ngss/src/lib/reducers/reducers-subscription-handler.service";
 import { ReducerInterface } from "projects/ngss/src/lib/reducers/reducers.interface";
+import { RevertChangesService } from "projects/ngss/src/lib/revert-changes/revert-changes-service.interface";
+import { RevertChangesStatus } from "projects/ngss/src/lib/revert-changes/revert-changes-status.interface";
+import { RevertChangesFactoryService } from "projects/ngss/src/lib/revert-changes/services/revert-changes-factory.service";
 import { DumbReducerTestService } from "projects/ngss/src/tests/reducers/dumb-reducer-test.service";
 import { TestReducer } from "projects/ngss/src/tests/reducers/reducer.class.mock";
 import { TestReducerSignal } from "projects/ngss/src/tests/reducers/reducer.signal.mock";
 import * as ReducerTestUtils from "projects/ngss/src/tests/reducers/reducer.test.utils";
+import { take } from "rxjs";
 
 const EACH_REDUCER_IMPLEMENTATION = [
   'ClassReducer',
@@ -32,6 +37,45 @@ const getMockedReducersSubscriptionHandlerService = () => {
 
 const MockReducerSubscriptionHandlerService = getMockedReducersSubscriptionHandlerService();
 
+const reducerOptions: Partial<ReducerOptions> = {
+  revert: {
+    savePreviousStateType: 'ALL_STATE',
+    savePreviousStateSaveType: 'RAW',
+    maxPreviousStates: 10,
+  }
+};
+
+const getMockedRevertChangesFactoryService = () => {
+
+  const mockSaveInitialState = jest.fn();
+  const mockSaveChanges = jest.fn();
+  const mockRevertChanges = jest.fn().mockReturnValue({ isSuccess: true } as RevertChangesStatus);
+
+  const mockRevertChangesService = {
+    saveInitialState: mockSaveInitialState,
+    saveChanges: mockSaveChanges,
+    revertChanges: mockRevertChanges,
+  } as unknown as RevertChangesService<unknown>;
+
+  const mockGetService = jest.fn().mockReturnValue(mockRevertChangesService);
+
+  const revertChangesFactoryService = {
+    get: mockGetService,
+  } as unknown as RevertChangesFactoryService;
+
+  return {
+    revertChangesFactoryService,
+    mockRevertChangesService,
+    mockGetService,
+    mockSaveInitialState,
+    mockSaveChanges,
+    mockRevertChanges,
+  }
+};
+
+
+const MockRevertChangesFactoryService = getMockedRevertChangesFactoryService();
+
 const ReducerFactory = (storeName: string): ReducerInterface<ReducerTestUtils.ReducerValueInterface> => {
   let reducer: ReducerInterface<ReducerTestUtils.ReducerValueInterface>;
   TestBed.runInInjectionContext(() => {
@@ -56,6 +100,10 @@ beforeEach(() => {
       {
         provide: ReducersSubscriptionHandlerService,
         useValue: MockReducerSubscriptionHandlerService.reducerSubscriptionHandlerService,
+      },
+      {
+        provide: RevertChangesFactoryService,
+        useValue: MockRevertChangesFactoryService.revertChangesFactoryService,
       },
       DumbReducerTestService
     ]
@@ -102,7 +150,7 @@ describe("Reducer basic tests", () => {
     TestBed.runInInjectionContext(() => {
       reducer = ReducerFactory(reducerName);
     });
-    reducer.getState().subscribe((state) => {
+    reducer.getState().pipe(take(1)).subscribe((state) => {
       expect(state).toEqual(ReducerTestUtils.InitialState);
       done();
     });
@@ -138,7 +186,7 @@ describe("Reducer handling actions", () => {
     const countOnInit = reducer.getSnapshot().count;
     const dispatchedCount = 1;
     reducer.handleAction(new ReducerTestUtils.TestAction({ count: dispatchedCount }));
-    reducer.getState().subscribe((state) => {
+    reducer.getState().pipe(take(1)).subscribe((state) => {
       expect(state).toEqual({ count: countOnInit + dispatchedCount + DumbReducerTestService.RETURN_VALUE });
       done();
     });
@@ -163,7 +211,7 @@ describe("Reducer handling actions", () => {
     const countOnInit = reducer.getSnapshot().count;
     const dispatchedCount = 1;
     reducer.handleAction(new ReducerTestUtils.TestActionObservable({ count: dispatchedCount }));
-    reducer.getState().subscribe((state) => {
+    reducer.getState().pipe(take(1)).subscribe((state) => {
       const expectedState = { count: countOnInit + dispatchedCount + DumbReducerTestService.RETURN_VALUE };
       if (state.count === expectedState.count) {
         expect(state).toEqual(expectedState);
@@ -225,7 +273,7 @@ describe("Reducer reset", () => {
     const dispatchedCount = 1;
     reducer.handleAction(new ReducerTestUtils.TestAction({ count: dispatchedCount }));
     reducer.reset();
-    reducer.getState().subscribe((state) => {
+    reducer.getState().pipe(take(1)).subscribe((state) => {
       expect(state).toEqual(ReducerTestUtils.InitialState);
       done();
     });
@@ -241,4 +289,44 @@ describe("Reducer reset", () => {
     reducer.reset();
     expect(reducer.getStateSignal()()).toEqual(ReducerTestUtils.InitialState);
   });
+});
+
+describe("Reducer revert changes", () => {
+  it.each(EACH_REDUCER_IMPLEMENTATION)("should save initial state for %s", (reducerName) => {
+    let reducer: ReducerInterface<ReducerTestUtils.ReducerValueInterface>;
+    TestBed.runInInjectionContext(() => {
+      reducer = ReducerFactory(reducerName);
+    });
+    expect(MockRevertChangesFactoryService.mockSaveInitialState).toHaveBeenCalled();
+  });
+
+  it.each(EACH_REDUCER_IMPLEMENTATION)("should save changes for %s", (reducerName) => {
+    let reducer: ReducerInterface<ReducerTestUtils.ReducerValueInterface>;
+    TestBed.runInInjectionContext(() => {
+      reducer = ReducerFactory(reducerName);
+    });
+    const dispatchedCount = 1;
+    reducer.handleAction(new ReducerTestUtils.TestAction({ count: dispatchedCount }));
+    expect(MockRevertChangesFactoryService.mockSaveChanges).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(EACH_REDUCER_IMPLEMENTATION)("should revert changes for %s", (reducerName) => {
+    let reducer: ReducerInterface<ReducerTestUtils.ReducerValueInterface>;
+    TestBed.runInInjectionContext(() => {
+      reducer = ReducerFactory(reducerName);
+    });
+    const dispatchedCount = 1;
+    reducer.handleAction(new ReducerTestUtils.TestAction({ count: dispatchedCount }));
+    reducer.revert({ byNumOfActions: 1 });
+    expect(MockRevertChangesFactoryService.mockRevertChanges).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(EACH_REDUCER_IMPLEMENTATION)("should reset trigger saveInitialState", (reducerName) => {
+    let reducer: ReducerInterface<ReducerTestUtils.ReducerValueInterface>;
+    TestBed.runInInjectionContext(() => {
+      reducer = ReducerFactory(reducerName); 5444
+    });
+    reducer.reset();
+    expect(MockRevertChangesFactoryService.mockSaveInitialState).toHaveBeenCalledTimes(2);
+  })
 });
