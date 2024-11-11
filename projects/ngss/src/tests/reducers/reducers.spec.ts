@@ -324,7 +324,7 @@ describe("Reducer revert changes", () => {
   it.each(EACH_REDUCER_IMPLEMENTATION)("should reset trigger saveInitialState", (reducerName) => {
     let reducer: ReducerInterface<ReducerTestUtils.ReducerValueInterface>;
     TestBed.runInInjectionContext(() => {
-      reducer = ReducerFactory(reducerName);
+      reducer = ReducerFactory(reducerName); 5444
     });
     reducer.reset();
     expect(MockRevertChangesFactoryService.mockSaveInitialState).toHaveBeenCalledTimes(2);
