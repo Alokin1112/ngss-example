@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AnyShape } from "@pages/vector-paint/interfaces/vector-shapes.interface";
 import { AddShape, RemoveShape, UpdateShape } from "@pages/vector-paint/store/vector-paint.actions";
+import { TEST_INITIAL_SHAPES_DATA } from "@pages/vector-paint/tests/test-initial-shapes-data.const";
 import { ActionHandler, ActionHandlerContext, StoreReducer } from "ngss";
 
 
@@ -9,7 +10,7 @@ export interface VectorPaintState {
 }
 
 const initialState: VectorPaintState = {
-  alreadyDrawnShapes: [],
+  alreadyDrawnShapes: TEST_INITIAL_SHAPES_DATA,
 };
 
 
