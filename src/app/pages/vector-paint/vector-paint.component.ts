@@ -7,8 +7,10 @@ import { VectorPaintTopToolbarComponent } from '@pages/vector-paint/components/v
 import { FocusedShape } from '@pages/vector-paint/interfaces/vector-canvas-data.interface';
 import { ToolItemType } from '@pages/vector-paint/interfaces/vector-paint-tool-options.interface';
 import { VectorPaintReducer } from '@pages/vector-paint/store/vector-paint.reducer';
-import { RevertChangesSavedStateService } from 'ngss';
+import { RevertChangesSavedStateService, Store } from 'ngss';
 import { RevertChangesSavedStateAccessor } from '@pages/vector-paint/tests/test-revert-changes-saved-state.accessor';
+import { TestActionsExecutor } from '@pages/vector-paint/tests/test-actions-executor.const';
+import { TEST_MODIFY_ACTION_ADD_REMOVE, TEST_MODIFY_ACTION_ADD_UPDATE, TEST_MODIFY_ACTIONS_ONLY_ADD, TEST_MODIFY_ACTIONS_ONLY_UPDATE, TEST_MODIFY_ADD_UPDATE_REMOVE } from '@pages/vector-paint/tests/test-modify-actions.const';
 
 @Component({
   selector: 'ds-vector-paint',
@@ -28,11 +30,15 @@ export class VectorPaintComponent {
 
   constructor(
     private vectorPaintReducer: VectorPaintReducer,
+    private store: Store,
   ) {
 
     const reducer = vectorPaintReducer as unknown as RevertChangesSavedStateAccessor<unknown>;
     console.log(reducer?.revertChangesService?.stateService);
     // console.log((new Blob([JSON.stringify(initialState?.alreadyDrawnShapes)])).size);
+    TestActionsExecutor(this.store, TEST_MODIFY_ADD_UPDATE_REMOVE);
+    console.log(this.store.selectSnapshot(state => state.vectorPaint.alreadyDrawnShapes));
+
   }
 
   changeFocusedShape(shape: FocusedShape): void {
