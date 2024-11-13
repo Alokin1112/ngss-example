@@ -1,14 +1,17 @@
 from flask import Flask, request, jsonify
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/save/<string:id>', methods=['POST'])
 def save_value(id):
     data = request.get_json()
-    
+    print(data)
+
     # Sprawdzenie, czy pole 'value' istnieje i czy jest liczbą
-    if 'value' not in data or not isinstance(data['value'], (int, float)):
+    if 'value' not in data:
         return jsonify({"error": "Invalid input: 'value' must be a number."}), 400
 
     value = data['value']

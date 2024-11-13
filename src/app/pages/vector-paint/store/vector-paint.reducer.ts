@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { AnyShape } from "@pages/vector-paint/interfaces/vector-shapes.interface";
 import { AddShape, RemoveShape, UpdateShape } from "@pages/vector-paint/store/vector-paint.actions";
 import { TEST_INITIAL_SHAPES_DATA } from "@pages/vector-paint/tests/test-initial-shapes-data.const";
-import { ActionHandler, ActionHandlerContext, StoreReducer } from "ngss";
+import { ActionHandler, ActionHandlerContext, RevertChangesServiceType, RevertChangesStateType, StoreReducer } from "ngss";
 
 
 export interface VectorPaintState {
@@ -13,12 +13,22 @@ const initialState: VectorPaintState = {
   alreadyDrawnShapes: TEST_INITIAL_SHAPES_DATA,
 };
 
+export const VECTOR_PAINT_SAVE_STATE_TYPE: RevertChangesServiceType = 'ONLY_CHANGED';
+export const VECTOR_PAINT_SAVE_STATE_SAVE_TYPE: RevertChangesStateType = "COMPRESSED";
+export const VECTOR_PAINT_MAX_PREVIOUS_STATES = 30;
+
 
 @Injectable({ providedIn: 'root' })
 export class VectorPaintReducer extends StoreReducer<VectorPaintState> {
   readonly name = "vectorPaint";
   constructor() {
-    super(initialState, { revert: { savePreviousStateType: 'ONLY_CHANGED_TOP_DOWN', maxPreviousStates: 20, savePreviousStateSaveType: "COMPRESSED_WEB_ASSEMBLY" } });
+    super(initialState, {
+      revert: {
+        savePreviousStateType: VECTOR_PAINT_SAVE_STATE_TYPE,
+        maxPreviousStates: VECTOR_PAINT_MAX_PREVIOUS_STATES,
+        savePreviousStateSaveType: VECTOR_PAINT_SAVE_STATE_SAVE_TYPE
+      }
+    });
   }
 
   @ActionHandler(AddShape)
