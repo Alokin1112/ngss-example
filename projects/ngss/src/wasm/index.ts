@@ -1,3 +1,5 @@
+import { JSON } from "json-as/assembly";
+
 export function lzwEncode(input: string): string {
   // Initialize the dictionary
   const dictionary = new Map<string, i32>();
@@ -80,7 +82,7 @@ class Edit {
     this.position = position;
   }
 
-  toString(): string {
+  toEditJson(): EditToJson {
     let operation: string;
     switch (this.operation) {
       case EditOperation.Insert:
@@ -96,7 +98,20 @@ class Edit {
         operation = "unk";
         break;
     }
-    return `{"op": "${operation}", "char": "${this.char}", "pos": ${this.position.toString()}}`;
+    return new EditToJson(operation, this.char, this.position);
+  }
+}
+
+@json
+class EditToJson {
+  op: string;
+  char: string;
+  pos: i32;
+
+  constructor(op: string, char: string, pos: i32) {
+    this.op = op;
+    this.char = char;
+    this.pos = pos;
   }
 }
 
@@ -127,6 +142,19 @@ function computeLastLine(a: string, b: string): Int32Array {
   return prev;
 }
 
+function pushInsert(changes: Array<Edit>, operation: EditOperation, char: string, pos: i32): void {
+  if (changes.length < 1) {
+    changes.push(new Edit(operation, char, pos));
+    return;
+  }
+  const last = changes[changes.length - 1];
+  if (last.operation == EditOperation.Insert && last.position == pos) {
+    last.char = char + last.char;
+  } else {
+    changes.push(new Edit(operation, char, pos));
+  }
+}
+
 // Funkcja główna algorytmu Hirschberga
 function hirschberg(a: string, b: string, i: i32, j: i32, changes: Array<Edit>): void {
   const m = j - i;
@@ -134,7 +162,7 @@ function hirschberg(a: string, b: string, i: i32, j: i32, changes: Array<Edit>):
 
   if (m == 0) {
     for (let k = 0; k < n; k++) {
-      changes.push(new Edit(EditOperation.Insert, b.charAt(k), i + k));
+      pushInsert(changes, EditOperation.Insert, b.charAt(k), i + k);
     }
   } else if (n == 0) {
     for (let k = 0; k < m; k++) {
@@ -199,7 +227,7 @@ function simpleLevenshtein(a: string, b: string, i: i32, j: i32, changes: Array<
       changes.push(new Edit(EditOperation.Delete, a.charAt(x - 1), i + x - 1));
       x--;
     } else if (y > 0 && dp[x][y] == dp[x][y - 1] + 1) {
-      changes.push(new Edit(EditOperation.Insert, b.charAt(y - 1), i + x));
+      pushInsert(changes, EditOperation.Insert, b.charAt(y - 1), i + x);
       y--;
     } else {
       if (dp[x][y] == dp[x - 1][y - 1] + 1) {
@@ -215,5 +243,5 @@ function simpleLevenshtein(a: string, b: string, i: i32, j: i32, changes: Array<
 export function getChanges(a: string, b: string): Array<string> {
   const changes: Array<Edit> = [];
   hirschberg(a, b, 0, a.length, changes);
-  return changes.map<string>(edit => edit.toString());
+  return changes.map<string>(edit => JSON.stringify(edit.toEditJson()));
 }

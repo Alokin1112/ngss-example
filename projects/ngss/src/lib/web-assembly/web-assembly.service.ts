@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ASUtil, instantiate, ResultObject } from '@assemblyscript/loader';
 import { RevertChangesStringStateOperations } from 'projects/ngss/src/lib/revert-changes/revert-changes-string-state-operations.interface';
+import { sortObjectKeys } from 'projects/ngss/src/lib/utils/sort-object-keys.const';
 import { Observable, ReplaySubject, take } from 'rxjs';
 
 @Injectable({
@@ -61,8 +62,8 @@ export class WebAssemblyService {
     if (!this.wasmModule) {
       return [];
     }
-    const aStringified = JSON.stringify(a, Object.keys(a).sort());
-    const bStringified = JSON.stringify(b, Object.keys(b).sort());
+    const aStringified = JSON.stringify(sortObjectKeys(a));
+    const bStringified = JSON.stringify(sortObjectKeys(b));
 
     const { __newString, __getString, __getArray, } = this.wasmModule.exports;
     const __getChanges = this.wasmModule.exports?.['getChanges'] as (aStrPtr: number, bStrPtr: number) => number;
@@ -71,18 +72,30 @@ export class WebAssemblyService {
     const bStrPtr = __newString(bStringified);
     const changesPtr = __getChanges(aStrPtr, bStrPtr);
     const changes = __getArray(changesPtr);
-    return changes.map((ptr) => JSON.parse(__getString(ptr)) as RevertChangesStringStateOperations);
+    const resultStringified = changes.map((ptr) => __getString(ptr));
+    const result = resultStringified.map((str) => JSON.parse(str) as RevertChangesStringStateOperations);
+    console.log('result', result);
+    return result;
   }
 
   private async loadWasmModule() {
     try {
       //TODO: Sprawdzić czy można wywalic biblioteke
-      this.wasmModule = await instantiate(fetch('/assets/ngss/wasm.wasm'));
+      this.wasmModule = await instantiate(fetch('/assets/ngss/wasm.wasm'), {
+        env: {
+          "console.log": (arg: any) => this.logMessage(arg),
+        } as any,
+      });
       this.ready.next();
       this._isReady = true;
     } catch (error) {
       console.error('Failed to load WASM module', error);
     }
+  }
+
+  private logMessage(message: number): void {
+    const { __getString } = this.wasmModule.exports;
+    console.log(__getString(message));
   }
 
 }
