@@ -10,7 +10,7 @@ export interface ExecutionAction<T> {
 
 
 
-export const TestActionsExecutor = (store: Store, actions: ExecutionAction<unknown>[]): void => {
+export const TestActionsExecutor = (store: Store, actions: ExecutionAction<unknown>[]): number => {
   const actionInstances: ActionClass<unknown>[] = actions.map(action => {
     if (action.type === 'add') {
       return new AddShape(action.payload as AnyShape);
@@ -23,8 +23,15 @@ export const TestActionsExecutor = (store: Store, actions: ExecutionAction<unkno
     }
   });
 
-  // const start = window.performance.now();
-  actionInstances.forEach(action => store.dispatch(action));
+  const dispatchTimes: number[] = [];
+  actionInstances.forEach(action => {
+    const start = window.performance.now();
+    store.dispatch(action);
+    const end = window.performance.now();
+    dispatchTimes.push(end - start);
+  });
+
+  return dispatchTimes.reduce((acc, curr) => acc + curr, 0) / (dispatchTimes.length || 1);
 };
 
 export type TestVersions = 'add' | 'update' | 'remove' | 'add-update' | 'add-remove' | 'add-update-remove';

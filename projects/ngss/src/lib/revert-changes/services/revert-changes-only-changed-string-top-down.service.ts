@@ -4,7 +4,9 @@ import { RevertChangesOptions } from 'projects/ngss/src/lib/revert-changes/rever
 import { RevertChangesSavedState, RevertChangesSavedStateService, RevertChangesService, StateChangeCallback } from 'projects/ngss/src/lib/revert-changes/revert-changes-service.interface';
 import { RevertChangesStatus } from 'projects/ngss/src/lib/revert-changes/revert-changes-status.interface';
 import { RevertChangesStringStateOperations } from 'projects/ngss/src/lib/revert-changes/revert-changes-string-state-operations.interface';
+import { getStringChanges } from 'projects/ngss/src/lib/revert-changes/revert-changes-string.const';
 import { stringStateChangesReverter } from 'projects/ngss/src/lib/revert-changes/string-state-changes-reverter.const';
+import { sortObjectKeys } from 'projects/ngss/src/lib/utils/sort-object-keys.const';
 import { WebAssemblyService } from 'projects/ngss/src/lib/web-assembly/web-assembly.service';
 
 export class RevertChangesOnlyChangedStringTopDownService<T> implements RevertChangesService<T> {
@@ -22,7 +24,7 @@ export class RevertChangesOnlyChangedStringTopDownService<T> implements RevertCh
   saveInitialState(state: T): void {
     this.stateService.clear();
     const stateToSave: RevertChangesSavedState<T> = { data: state, dateTime: new Date() };
-    this.stateService.pushState(stateToSave); //first for upToDate state
+    this.stateService.pushState(this.getSortedData(stateToSave)); //first for upToDate state
   }
 
   saveChanges<A>(newState: T, handledAction: ActionInterface<A>): void {
@@ -30,13 +32,16 @@ export class RevertChangesOnlyChangedStringTopDownService<T> implements RevertCh
     const previousUpToDateState = this.stateService.get(stateLength - 1, stateLength)[0];
     const previousUpToDateStateData = previousUpToDateState?.data as T;
     if (!previousUpToDateState) {
-      this.stateService.pushState({ data: newState, dateTime: new Date(), actionType: handledAction.getType() });
+      this.stateService.pushState({ data: this.getSortedData(newState), dateTime: new Date(), actionType: handledAction.getType() });
       return;
     }
-    const diff = this.wasmService.getChanges(newState, previousUpToDateStateData);
+
+    const sortedNewState = this.getSortedData(newState);
+    // const diff = this.wasmService.getChanges(sortedNewState, previousUpToDateStateData);
+    const diff = getStringChanges(sortedNewState, previousUpToDateStateData);
     const diffState: RevertChangesSavedState<RevertChangesStringStateOperations[]> = { ...previousUpToDateState, data: diff };
     this.stateService.saveAt(stateLength - 1, diffState);
-    this.stateService.pushState({ dateTime: new Date(), actionType: handledAction.getType(), data: newState });
+    this.stateService.pushState({ dateTime: new Date(), actionType: handledAction.getType(), data: sortedNewState });
 
     this.shiftArrayIfNeeded();
   }
@@ -54,7 +59,7 @@ export class RevertChangesOnlyChangedStringTopDownService<T> implements RevertCh
     this.stateService.remove(indexToRevert, this.stateService.getLength());
     this.stateService.pushState({
       ...previousStates[0],
-      data: stateDataToRevert
+      data: this.getSortedData(stateDataToRevert)
     });
 
     stateChangeCallback(stateDataToRevert);
@@ -66,6 +71,10 @@ export class RevertChangesOnlyChangedStringTopDownService<T> implements RevertCh
     while (this.stateService.getLength() > this.options.maxPreviousStates + 1) {
       this.stateService.remove(0, 1);
     }
+  }
+
+  private getSortedData<X>(data: X): X {
+    return sortObjectKeys(data);
   }
 
 }

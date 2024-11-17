@@ -6,10 +6,17 @@ const operationsActions: Record<RevertChangesStringStateOperationsType, (charact
     characters[action?.pos] = `${action?.char}${characters[action?.pos]}`;
   },
   "del": (characters, action) => {
-    characters[action?.pos] = "";
+    const length = action?.char?.length || 0;
+    for (let i = 0; i < length; i++) {
+      characters[action?.pos + i] = '';
+    }
   },
   "sub": (characters, action) => {
     characters[action?.pos] = action?.char;
+    const length = action?.char?.length || 0;
+    for (let i = 0; i < length; i++) {
+      characters[action?.pos + i] = action?.char[i];
+    }
   },
   "unk": (characters, action) => {
     console.error(`Unknown operation: ${action?.op}`);
@@ -17,7 +24,7 @@ const operationsActions: Record<RevertChangesStringStateOperationsType, (charact
 }
 
 export const stringStateChangesReverter = <T>(state: T, changes: RevertChangesStringStateOperations[]): T => {
-  const characters = JSON.stringify(state, Object.keys(state).sort()).split('');
+  const characters = JSON.stringify(state).split('');
   changes.reverse().forEach((change) => {
     operationsActions[change.op](characters, change);
   });

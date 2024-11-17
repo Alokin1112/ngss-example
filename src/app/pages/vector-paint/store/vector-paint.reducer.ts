@@ -10,11 +10,11 @@ export interface VectorPaintState {
 }
 
 const initialState: VectorPaintState = {
-  alreadyDrawnShapes: TEST_INITIAL_SHAPES_DATA.slice(0, 4),
+  alreadyDrawnShapes: TEST_INITIAL_SHAPES_DATA,
 };
 
 export const VECTOR_PAINT_SAVE_STATE_TYPE: RevertChangesServiceType = 'ONLY_CHANGED_STRING';
-export const VECTOR_PAINT_SAVE_STATE_SAVE_TYPE: RevertChangesStateType = "RAW";
+export const VECTOR_PAINT_SAVE_STATE_SAVE_TYPE: RevertChangesStateType = "COMPRESSED";
 export const VECTOR_PAINT_MAX_PREVIOUS_STATES = 30;
 
 

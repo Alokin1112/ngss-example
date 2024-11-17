@@ -1,18 +1,16 @@
-import { effect, Injector, OnInit, signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { VectorPaintCanvasComponent } from '@pages/vector-paint/components/vector-paint-canvas/vector-paint-canvas.component';
 import { VectorPaintLeftToolbarComponent } from '@pages/vector-paint/components/vector-paint-left-toolbar/vector-paint-left-toolbar.component';
 import { VectorPaintTopToolbarComponent } from '@pages/vector-paint/components/vector-paint-top-toolbar/vector-paint-top-toolbar.component';
 import { FocusedShape } from '@pages/vector-paint/interfaces/vector-canvas-data.interface';
 import { ToolItemType } from '@pages/vector-paint/interfaces/vector-paint-tool-options.interface';
 import { VECTOR_PAINT_SAVE_STATE_SAVE_TYPE, VECTOR_PAINT_SAVE_STATE_TYPE, VectorPaintReducer } from '@pages/vector-paint/store/vector-paint.reducer';
-import { RevertChangesSavedStateService, RevertChangesServiceType, Store } from 'ngss';
-import { RevertChangesSavedStateAccessor } from '@pages/vector-paint/tests/test-revert-changes-saved-state.accessor';
-import { TEST_DATA_RECORD, TEST_VERSIONS_ORDER, TestActionsExecutor, TestVersions } from '@pages/vector-paint/tests/test-actions-executor.const';
-import { TEST_MODIFY_ACTION_ADD_REMOVE, TEST_MODIFY_ACTION_ADD_UPDATE, TEST_MODIFY_ACTIONS_ONLY_ADD, TEST_MODIFY_ACTIONS_ONLY_UPDATE, TEST_MODIFY_ADD_UPDATE_REMOVE } from '@pages/vector-paint/tests/test-modify-actions.const';
-import { ActivatedRoute, Router } from '@angular/router';
 import { sleep, statisticsCall } from '@pages/vector-paint/tests/api-statitics-caller.const';
+import { TEST_DATA_RECORD, TEST_VERSIONS_ORDER, TestActionsExecutor, TestVersions } from '@pages/vector-paint/tests/test-actions-executor.const';
+import { RevertChangesSavedStateAccessor } from '@pages/vector-paint/tests/test-revert-changes-saved-state.accessor';
+import { Store } from 'ngss';
 
 @Component({
   selector: 'ds-vector-paint',
@@ -52,14 +50,13 @@ export class VectorPaintComponent implements OnInit {
     console.log("Active test version: ", activeTestVersion);
     // await sleep(1000);
     const activeTestData = TEST_DATA_RECORD[activeTestVersion];
-    TestActionsExecutor(this.store, activeTestData);
+    const meanTime = TestActionsExecutor(this.store, activeTestData);
     void this.router.navigate(['./'], { relativeTo: this.route });
-    const stateLengthInBytes = (new Blob([JSON.stringify((this.reducer.revertChangesService.stateService as any).savedState as any)])).size;
     const fileDir = `${VECTOR_PAINT_SAVE_STATE_TYPE}--${VECTOR_PAINT_SAVE_STATE_SAVE_TYPE}--${activeTestVersion}`;
 
-    const res = await statisticsCall(fileDir, stateLengthInBytes);
+    const res = await statisticsCall(fileDir, meanTime);
 
-    if (res?.line_count < 40) {
+    if (res?.line_count < 20) {
       this.reloadPage(activeTestVersion);
     } else {
       const nextIndex = TEST_VERSIONS_ORDER.indexOf(activeTestVersion) + 1;

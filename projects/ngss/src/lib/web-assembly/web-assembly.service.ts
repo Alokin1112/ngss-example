@@ -62,8 +62,8 @@ export class WebAssemblyService {
     if (!this.wasmModule) {
       return [];
     }
-    const aStringified = JSON.stringify(sortObjectKeys(a));
-    const bStringified = JSON.stringify(sortObjectKeys(b));
+    const aStringified = JSON.stringify(a);
+    const bStringified = JSON.stringify(b);
 
     const { __newString, __getString, __getArray, } = this.wasmModule.exports;
     const __getChanges = this.wasmModule.exports?.['getChanges'] as (aStrPtr: number, bStrPtr: number) => number;
@@ -74,7 +74,6 @@ export class WebAssemblyService {
     const changes = __getArray(changesPtr);
     const resultStringified = changes.map((ptr) => __getString(ptr));
     const result = resultStringified.map((str) => JSON.parse(str) as RevertChangesStringStateOperations);
-    console.log('result', result);
     return result;
   }
 
