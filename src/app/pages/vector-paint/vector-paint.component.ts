@@ -49,7 +49,7 @@ export class VectorPaintComponent implements OnInit {
     if (!activeTestVersion) return;
     console.log("Active test version: ", activeTestVersion);
     // await sleep(1000);
-    const activeTestData = TEST_DATA_RECORD[activeTestVersion];
+    const activeTestData = TEST_DATA_RECORD[activeTestVersion].slice(0, 10);
     const meanTime = TestActionsExecutor(this.store, activeTestData);
     void this.router.navigate(['./'], { relativeTo: this.route });
     const fileDir = `${VECTOR_PAINT_SAVE_STATE_TYPE}--${VECTOR_PAINT_SAVE_STATE_SAVE_TYPE}--${activeTestVersion}`;

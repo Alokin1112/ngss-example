@@ -10,7 +10,7 @@ export interface VectorPaintState {
 }
 
 const initialState: VectorPaintState = {
-  alreadyDrawnShapes: TEST_INITIAL_SHAPES_DATA,
+  alreadyDrawnShapes: TEST_INITIAL_SHAPES_DATA.slice(0, 5),
 };
 
 export const VECTOR_PAINT_SAVE_STATE_TYPE: RevertChangesServiceType = 'ONLY_CHANGED_STRING_TOP_DOWN';
