@@ -1,5 +1,6 @@
 import { AnyShape } from "@pages/vector-paint/interfaces/vector-shapes.interface";
 import { AddShape, RemoveShape, UpdateShape } from "@pages/vector-paint/store/vector-paint.actions";
+import { VectorPaintReducer } from "@pages/vector-paint/store/vector-paint.reducer";
 import { TEST_MODIFY_ACTION_ADD_REMOVE, TEST_MODIFY_ACTION_ADD_UPDATE, TEST_MODIFY_ACTIONS_ONLY_ADD, TEST_MODIFY_ACTIONS_ONLY_REMOVE, TEST_MODIFY_ACTIONS_ONLY_UPDATE, TEST_MODIFY_ADD_UPDATE_REMOVE } from "@pages/vector-paint/tests/test-modify-actions.const";
 import { ActionClass, Store } from "ngss";
 
@@ -23,13 +24,18 @@ export const TestActionsExecutor = (store: Store, actions: ExecutionAction<unkno
     }
   });
 
-  const dispatchTimes: number[] = [];
   actionInstances.forEach(action => {
-    const start = window.performance.now();
     store.dispatch(action);
-    const end = window.performance.now();
-    dispatchTimes.push(end - start);
   });
+
+  const dispatchTimes: number[] = [];
+  for (let i = 0; i < 20; i++) {
+    const start = window.performance.now();
+    store.revert(VectorPaintReducer, { byNumOfActions: 1 });
+    const end = window.performance.now();
+    store.dispatch(actionInstances[actionInstances.length - 1]);
+    dispatchTimes.push(end - start);
+  }
 
   return dispatchTimes.reduce((acc, curr) => acc + curr, 0) / (dispatchTimes.length || 1);
 };
