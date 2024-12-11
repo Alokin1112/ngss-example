@@ -15,11 +15,11 @@ def create_csv_from_folders(base_dir, output_csv):
             except ValueError:
                 print(f"Skipping folder with invalid format: {folder}")
                 continue
-            
+
             # Ensure firstName is in data
             if first_name not in data:
                 data[first_name] = {}
-            
+
             # Traverse files in the folder
             for file in os.listdir(folder_path):
                 if file.endswith(".txt"):
@@ -48,7 +48,7 @@ def create_csv_from_folders(base_dir, output_csv):
     # Create CSV structure
     with open(output_csv, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        
+
         # Write header row (firstName)
         header = []
         for first_name in data.keys():
@@ -66,6 +66,6 @@ def create_csv_from_folders(base_dir, output_csv):
             writer.writerow(row)
 
 # Example usage
-base_dir = "/Users/dawidszczepankowski/Documents/Studia/projekt-dyplomowy/ngss-example/calculations/dispatch-mean-time/45-initial-30-changes"
-output_csv = "output.csv"
+base_dir = "G:\\Szkola\\Studia\\ngss\\calculations\\revert-time\\45-initial-30-changes"
+output_csv = "output-revert.csv"
 create_csv_from_folders(base_dir, output_csv)
