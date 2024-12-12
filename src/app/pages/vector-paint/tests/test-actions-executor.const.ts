@@ -29,11 +29,10 @@ export const TestActionsExecutor = (store: Store, actions: ExecutionAction<unkno
   });
 
   const dispatchTimes: number[] = [];
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 1; i++) {
     const start = window.performance.now();
-    store.revert(VectorPaintReducer, { byNumOfActions: 1 });
+    store.revert(VectorPaintReducer, { byNumOfActions: 30 });
     const end = window.performance.now();
-    store.dispatch(actionInstances[actionInstances.length - 1]);
     dispatchTimes.push(end - start);
   }
 

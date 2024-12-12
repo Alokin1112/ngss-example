@@ -33,6 +33,7 @@ export class RevertChangesAllStateService<T> implements RevertChangesService<T> 
     const stateToRevert = this.stateService.get(indexToRevert, indexToRevert + 1)[0].data;
     this.stateService.remove(indexToRevert + 1, this.stateService.getLength());
     stateChangeCallback(stateToRevert);
+
     return { isSuccess: true };
   }
 
