@@ -66,6 +66,6 @@ def create_csv_from_folders(base_dir, output_csv):
             writer.writerow(row)
 
 # Example usage
-base_dir = "G:\\Szkola\\Studia\\ngss\\calculations\\revert-time\\45-initial-30-changes"
-output_csv = "output-revert.csv"
+base_dir = "G:\\Szkola\\Studia\\ngss\\calculations\\revert-time\\45-initial-30-changes-longterm"
+output_csv = "output-revert-longterm.csv"
 create_csv_from_folders(base_dir, output_csv)
