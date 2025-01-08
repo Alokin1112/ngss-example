@@ -79,7 +79,6 @@ export class WebAssemblyService {
 
   private async loadWasmModule() {
     try {
-      //TODO: Sprawdzić czy można wywalic biblioteke
       this.wasmModule = await instantiate(fetch('/assets/ngss/wasm.wasm'), {
         env: {
           "console.log": (arg: any) => this.logMessage(arg),
