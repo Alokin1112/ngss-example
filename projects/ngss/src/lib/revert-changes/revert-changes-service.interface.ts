@@ -20,7 +20,7 @@ export interface RevertChangesSavedStateService<T> {
 }
 
 
-export type RevertChangesServiceType = 'NONE' | 'ALL_STATE' | 'ONLY_CHANGED_NAIVE' | 'ONLY_CHANGED' | 'ONLY_CHANGED_TOP_DOWN' | 'ONLY_CHANGED_STRING' | 'ONLY_CAHNGED_STRING_TOP_DOWN';
+export type RevertChangesServiceType = 'NONE' | 'ALL_STATE' | 'ONLY_CHANGED_NAIVE' | 'ONLY_CHANGED' | 'ONLY_CHANGED_TOP_DOWN' | 'ONLY_CHANGED_STRING' | 'ONLY_CHANGED_STRING_TOP_DOWN';
 export type RevertChangesStateType = 'RAW' | 'COMPRESSED' | 'COMPRESSED_WEB_ASSEMBLY';
 
 export type StateChangeCallback<T> = (state: T) => void;

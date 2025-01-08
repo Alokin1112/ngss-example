@@ -1,3 +1,5 @@
+import { JSON } from "json-as/assembly";
+
 export function lzwEncode(input: string): string {
   // Initialize the dictionary
   const dictionary = new Map<string, i32>();
@@ -80,7 +82,7 @@ class Edit {
     this.position = position;
   }
 
-  toString(): string {
+  toEditJson(): EditToJson {
     let operation: string;
     switch (this.operation) {
       case EditOperation.Insert:
@@ -96,7 +98,20 @@ class Edit {
         operation = "unk";
         break;
     }
-    return `{"op": "${operation}", "char": "${this.char}", "pos": ${this.position.toString()}}`;
+    return new EditToJson(operation, this.char, this.position);
+  }
+}
+
+@json
+class EditToJson {
+  op: string;
+  char: string;
+  pos: i32;
+
+  constructor(op: string, char: string, pos: i32) {
+    this.op = op;
+    this.char = char;
+    this.pos = pos;
   }
 }
 
@@ -114,6 +129,7 @@ function computeLastLine(a: string, b: string): Int32Array {
   for (let i = 1; i <= m; i++) {
     curr[0] = i;
     for (let j = 1; j <= n; j++) {
+      // console.log(`a ${a} b ${b} i ${i} j ${j}`);
       if (a.charAt(i - 1) == b.charAt(j - 1)) {
         curr[j] = prev[j - 1];
       } else {
@@ -127,6 +143,49 @@ function computeLastLine(a: string, b: string): Int32Array {
   return prev;
 }
 
+function pushInsert(changes: Array<Edit>, char: string, pos: i32): void {
+  if (changes.length < 1) {
+    changes.push(new Edit(EditOperation.Insert, char, pos));
+    return;
+  }
+  const last = changes[changes.length - 1];
+  if (last.operation == EditOperation.Insert && last.position == pos) {
+    last.char = char + last.char;
+  } else {
+    changes.push(new Edit(EditOperation.Insert, char, pos));
+  }
+}
+
+function pushEdit(changes: Array<Edit>, char: string, pos: i32): void {
+  if (changes.length < 1) {
+    changes.push(new Edit(EditOperation.Substitute, char, pos));
+    return;
+  }
+  const last = changes[changes.length - 1];
+  if (last.operation == EditOperation.Substitute && (last.position + last.char.length) == pos) {
+    last.char = last.char + char;
+  } else {
+    changes.push(new Edit(EditOperation.Substitute, char, pos));
+  }
+}
+
+function pushDelete(changes: Array<Edit>, char: string, pos: i32): void {
+  if (changes.length < 1) {
+    changes.push(new Edit(EditOperation.Delete, " ", pos));
+    return;
+  }
+  const last = changes[changes.length - 1];
+  if (last.operation == EditOperation.Delete && (last.position + last.char.length) == pos) {
+    last.char = last.char + " ";
+  } else if (last.operation == EditOperation.Delete && (last.position - 1) == pos) {
+    last.char = " " + last.char;
+    last.position = pos;
+  }
+  else {
+    changes.push(new Edit(EditOperation.Delete, " ", pos));
+  }
+}
+
 // Funkcja główna algorytmu Hirschberga
 function hirschberg(a: string, b: string, i: i32, j: i32, changes: Array<Edit>): void {
   const m = j - i;
@@ -134,11 +193,11 @@ function hirschberg(a: string, b: string, i: i32, j: i32, changes: Array<Edit>):
 
   if (m == 0) {
     for (let k = 0; k < n; k++) {
-      changes.push(new Edit(EditOperation.Insert, b.charAt(k), i + k));
+      pushInsert(changes, b.charAt(k), i + k);
     }
   } else if (n == 0) {
     for (let k = 0; k < m; k++) {
-      changes.push(new Edit(EditOperation.Delete, a.charAt(i + k), i + k));
+      pushDelete(changes, a.charAt(i + k), i + k);
     }
   } else if (m == 1 || n == 1) {
     // Podstawowy przypadek: korzystamy z algorytmu Levenshteina
@@ -196,14 +255,14 @@ function simpleLevenshtein(a: string, b: string, i: i32, j: i32, changes: Array<
   let x = m, y = n;
   while (x > 0 || y > 0) {
     if (x > 0 && dp[x][y] == dp[x - 1][y] + 1) {
-      changes.push(new Edit(EditOperation.Delete, a.charAt(x - 1), i + x - 1));
+      pushDelete(changes, a.charAt(x - 1), i + x - 1);
       x--;
     } else if (y > 0 && dp[x][y] == dp[x][y - 1] + 1) {
-      changes.push(new Edit(EditOperation.Insert, b.charAt(y - 1), i + x));
+      pushInsert(changes, b.charAt(y - 1), i + x);
       y--;
     } else {
       if (dp[x][y] == dp[x - 1][y - 1] + 1) {
-        changes.push(new Edit(EditOperation.Substitute, b.charAt(y - 1), i + x - 1));
+        pushEdit(changes, b.charAt(y - 1), i + x - 1);
       }
       x--;
       y--;
@@ -215,5 +274,5 @@ function simpleLevenshtein(a: string, b: string, i: i32, j: i32, changes: Array<
 export function getChanges(a: string, b: string): Array<string> {
   const changes: Array<Edit> = [];
   hirschberg(a, b, 0, a.length, changes);
-  return changes.map<string>(edit => edit.toString());
+  return changes.map<string>(edit => JSON.stringify(edit.toEditJson()));
 }

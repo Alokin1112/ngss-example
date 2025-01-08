@@ -51,6 +51,10 @@ export class VectorPaintTopToolbarComponent<T extends VectorShapeType> implement
     this.store.revert(VectorPaintReducer, { byNumOfActions: 1 });
   }
 
+  logShapes(): void {
+    console.log(JSON.stringify(this.store.selectSnapshot(state => state.vectorPaint.alreadyDrawnShapes)));
+  }
+
   updateField(pathToProperty: keyof VectorShapePropertyMap[T], type: ShapeEditInputType, value: unknown): void {
     const shape = this.shapeToUpdate();
     if (!shape) {

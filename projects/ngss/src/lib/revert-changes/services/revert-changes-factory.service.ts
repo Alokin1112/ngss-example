@@ -42,7 +42,7 @@ export class RevertChangesFactoryService {
         return new RevertChangesOnlyChangedTopDownService<T>(options, savePreviousStateService);
       case 'ONLY_CHANGED_STRING':
         return new RevertChangesOnlyChangedStringService<T>(options, savePreviousStateService, this.wasmService);
-      case 'ONLY_CAHNGED_STRING_TOP_DOWN':
+      case 'ONLY_CHANGED_STRING_TOP_DOWN':
         return new RevertChangesOnlyChangedStringTopDownService<T>(options, savePreviousStateService, this.wasmService);
       default:
         throw new Error(`Unsupported savePreviousStateType: ${options?.savePreviousStateType}`);

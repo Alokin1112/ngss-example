@@ -5,7 +5,9 @@ import { RevertChangesOptions } from 'projects/ngss/src/lib/revert-changes/rever
 import { RevertChangesSavedState, RevertChangesSavedStateService, RevertChangesService, StateChangeCallback } from 'projects/ngss/src/lib/revert-changes/revert-changes-service.interface';
 import { RevertChangesStatus } from 'projects/ngss/src/lib/revert-changes/revert-changes-status.interface';
 import { RevertChangesStringStateOperations } from 'projects/ngss/src/lib/revert-changes/revert-changes-string-state-operations.interface';
+import { getStringChanges } from 'projects/ngss/src/lib/revert-changes/revert-changes-string.const';
 import { stringStateChangesReverter } from 'projects/ngss/src/lib/revert-changes/string-state-changes-reverter.const';
+import { sortObjectKeys } from 'projects/ngss/src/lib/utils/sort-object-keys.const';
 import { WebAssemblyService } from 'projects/ngss/src/lib/web-assembly/web-assembly.service';
 
 export class RevertChangesOnlyChangedStringService<T> implements RevertChangesService<T> {
@@ -23,21 +25,23 @@ export class RevertChangesOnlyChangedStringService<T> implements RevertChangesSe
   saveInitialState(state: T): void {
     this.stateService.clear();
     const stateToSave: RevertChangesSavedState<T> = { data: state, dateTime: new Date() };
-    this.stateService.pushState(stateToSave); //first for upToDate state
-    this.stateService.pushState(stateToSave); //second for previous state
+    this.stateService.pushState(this.getSortedData(stateToSave)); //first for upToDate state
+    this.stateService.pushState(this.getSortedData(stateToSave)); //second for previous state
   }
 
   saveChanges<A>(newState: T, handledAction: ActionInterface<A>): void {
     const previousUpToDateState = this.stateService.get(0, 1)[0]?.data as T;
     if (!previousUpToDateState) {
-      this.stateService.pushState({ data: newState, dateTime: new Date(), actionType: handledAction.getType() });
+      this.stateService.pushState({ data: this.getSortedData(newState), dateTime: new Date(), actionType: handledAction.getType() });
       return;
     }
-    const diff = this.wasmService.getChanges(previousUpToDateState, newState);
+    const sortedNewState = this.getSortedData(newState);
+    // const diff = this.wasmService.getChanges(previousUpToDateState, sortedNewState);
+    const diff = getStringChanges(previousUpToDateState, sortedNewState);
     const diffState: RevertChangesSavedState<RevertChangesStringStateOperations[]> = { data: diff, dateTime: new Date(), actionType: handledAction.getType() };
 
     this.stateService.pushState(diffState);
-    this.stateService.saveAt(0, { ...diffState, data: newState });
+    this.stateService.saveAt(0, { ...diffState, data: sortedNewState });
 
     this.shiftArrayIfNeeded();
   }
@@ -47,7 +51,6 @@ export class RevertChangesOnlyChangedStringService<T> implements RevertChangesSe
     if (indexToRevert < 1) { // 0 index is the upToDate state so we can't revert to it
       return { isSuccess: false, message: 'No saved state found' };
     }
-
     const previousStates = this.stateService.get(1, indexToRevert + 1);
     const initialStateData = JSON.parse(JSON.stringify(previousStates[0]?.data)) as T;
     const statesWithChanges = previousStates.slice(1) || [];
@@ -55,7 +58,7 @@ export class RevertChangesOnlyChangedStringService<T> implements RevertChangesSe
     this.stateService.remove(indexToRevert + 1, this.stateService.getLength());
     this.stateService.saveAt(0, {
       ...previousStates[previousStates.length - 1],
-      data: stateDataToRevert
+      data: this.getSortedData(stateDataToRevert),
     });
     stateChangeCallback(stateDataToRevert);
 
@@ -67,11 +70,15 @@ export class RevertChangesOnlyChangedStringService<T> implements RevertChangesSe
       const savedStates = this.stateService.get(1, 3);
       const newInitialState = {
         ...(savedStates[1] || {}),
-        data: stringStateChangesReverter(savedStates[0]?.data as T, savedStates[1]?.data as RevertChangesStringStateOperations[])
+        data: this.getSortedData(stringStateChangesReverter(savedStates[0]?.data as T, savedStates[1]?.data as RevertChangesStringStateOperations[]))
       } as RevertChangesSavedState<T>;
       this.stateService.remove(1, 2);
       this.stateService.saveAt(1, newInitialState);
     }
+  }
+
+  private getSortedData<X>(data: X): X {
+    return sortObjectKeys(data);
   }
 
 }

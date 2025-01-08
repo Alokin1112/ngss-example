@@ -2,7 +2,7 @@
   "name": "ngss",
   "version": "0.0.1",
   "scripts": {
-    "asbuild": "asc src/wasm/index.ts --target release --exportRuntime --outFile assets/wasm.wasm"
+    "asbuild": "asc src/wasm/index.ts --target release --exportRuntime --debug --sourceMap --transform json-as/transform --outFile assets/wasm.wasm"
   },
   "peerDependencies": {
     "@angular/common": "^17.0.0",
